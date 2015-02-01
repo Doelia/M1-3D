@@ -19,10 +19,16 @@ int main() {
 	Vector* n = new Vector(0, 0, 1);
 	Point* m = new Point(1, 1, 1);
 	Point* mPrim = m->projectOnPlan(a, n);
-	cout << "m' = " << *mPrim << endl;
+	cout << "m' = " << *mPrim << endl; // 1 1 0
 	//*/
 
 	
+	/*
+	Vector* AB = new Vector(4, 4, 0);
+	Vector* AC = new Vector(4, 8, 0);
+	cout << "produit' = " << AB->getScalar(AC) << endl;
+	cout << "produit' = " << AC->getScalar(AB) << endl;
+	//*/
 
 
 

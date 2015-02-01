@@ -1,34 +1,40 @@
 #include "Point.h"
 
+// On projete le point A sur la droite (BC)
 Point* Point::projectOnLine(Point* b, Point *c) {
 	Vector* u = new Vector(b,c);
-	u->normalize();
 	cout << "u = " << *u << endl;
 	return this->projectOnLine(u, b);
 }
 
 Point* Point::projectOnLine(Vector* u, Point* b) {
 	Point* a = this;
-	Vector* ba = new Vector(b,a);
-	cout << "ba = " << *ba << endl;
 
-	double normeBAPrim = ba->getScalar(u) / u->getNorme();
-	cout << "norme = " << normeBAPrim << endl;
+	Vector* uNormal = new Vector(*u);
+	uNormal->normalize();
+	Vector* ba = new Vector(b,a);
+
+	double normeBAPrim = ba->getScalar(uNormal);
 	return new Point(
-		b->getX() + u->getX()*normeBAPrim,
-		b->getY() + u->getY()*normeBAPrim,
-		b->getZ() + u->getZ()*normeBAPrim
+		b->getX() + uNormal->getX()*normeBAPrim,
+		b->getY() + uNormal->getY()*normeBAPrim,
+		b->getZ() + uNormal->getZ()*normeBAPrim
 	);
 }
 
+// n normalisé
 Point* Point::projectOnPlan(Point* a, Vector* n) {
 	Point* m = this;
-	Vector* ma = new Vector(m, a);
-	double normeMMPrim = ma->getScalar(n) / n->getNorme();
+
+	Vector* nNormal = new Vector(*n);
+	nNormal->normalize();
+
+	Vector* ma = new Vector(a, m);
+	double normeMMPrim = ma->getScalar(n);
 	return new Point(
-		m->getX() - n->getX() * normeMMPrim,
-		m->getY() - n->getY() * normeMMPrim,
-		m->getZ() - n->getZ() * normeMMPrim
+		m->getX() - nNormal->getX() * normeMMPrim,
+		m->getY() - nNormal->getY() * normeMMPrim,
+		m->getZ() - nNormal->getZ() * normeMMPrim
 	);
 }
 

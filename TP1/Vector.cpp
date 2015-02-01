@@ -5,7 +5,6 @@
 using namespace std;
 
 Vector::Vector(Coord* a, Coord* b) {
-	cout << "point of " << *a << " et " << *b << endl;
 	x = b->getX() - a->getX();
 	y = b->getY() - a->getY();
 	z = b->getZ() - a->getZ();

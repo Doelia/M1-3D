@@ -53,7 +53,7 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 		double u = 1.0/nbU * (double) j;
 		Point* p = new Point();
 		for (double i = 0; i < nControl; ++i) {
-			double Bni = (fact(nControl) / fact(i) * (nControl-i)) * pow(u, i) * pow(1-u, nControl-i);
+			double Bni = (fact(nControl) / (fact(i) * fact(nControl-i))) * pow(u, i) * pow(1-u, nControl-i);
 
 			int iTab = (int) i;
 			p->setX(p->getX() + Bni*tab[iTab]->getX());
@@ -61,8 +61,6 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 			p->setZ(p->getZ() + Bni*tab[iTab]->getZ());
 		}
 		pts[j] = p;
-
-		cout << "pts[" << j << "] = " << *pts[j] << endl;
 
 	}
 	return pts;

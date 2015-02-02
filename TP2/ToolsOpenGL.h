@@ -6,7 +6,7 @@
 #include <math.h>
 #include "Vector.h"
 #include "Point.h"
-#include <GL/glut.h> 
+#include "GlutIncluder.h"
 
 void drawPoint(Coord* c) {
 	glVertex3f(c->getX(), c->getY(), c->getZ());

@@ -1,9 +1,7 @@
 #include "Point.h"
 
-// On projete le point A sur la droite (BC)
 Point* Point::projectOnLine(Point* b, Point *c) {
 	Vector* u = new Vector(b,c);
-	cout << "u = " << *u << endl;
 	return this->projectOnLine(u, b);
 }
 
@@ -22,7 +20,6 @@ Point* Point::projectOnLine(Vector* u, Point* b) {
 	);
 }
 
-// n normalisé
 Point* Point::projectOnPlan(Point* a, Vector* n) {
 	Point* m = this;
 
@@ -31,8 +28,6 @@ Point* Point::projectOnPlan(Point* a, Vector* n) {
 
 	Vector* ma = new Vector(m, a);
 	double normeMMPrim = ma->getScalar(nNormal);
-	cout << "norme = " << normeMMPrim << endl;
-	cout << "ma = " << *ma << endl;
 	return new Point(
 		m->getX() + nNormal->getX() * normeMMPrim,
 		m->getY() + nNormal->getY() * normeMMPrim,

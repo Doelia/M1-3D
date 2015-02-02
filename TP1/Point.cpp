@@ -29,12 +29,13 @@ Point* Point::projectOnPlan(Point* a, Vector* n) {
 	Vector* nNormal = new Vector(*n);
 	nNormal->normalize();
 
-	Vector* ma = new Vector(a, m);
-	double normeMMPrim = ma->getScalar(n);
+	Vector* ma = new Vector(m, a);
+	double normeMMPrim = ma->getScalar(nNormal);
+	cout << "norme = " << normeMMPrim << endl;
 	return new Point(
-		m->getX() - nNormal->getX() * normeMMPrim,
-		m->getY() - nNormal->getY() * normeMMPrim,
-		m->getZ() - nNormal->getZ() * normeMMPrim
+		m->getX() + nNormal->getX() * normeMMPrim,
+		m->getY() + nNormal->getY() * normeMMPrim,
+		m->getZ() + nNormal->getZ() * normeMMPrim
 	);
 }
 

@@ -47,6 +47,9 @@ GLvoid window_display();
 GLvoid window_reshape(GLsizei width, GLsizei height); 
 GLvoid window_key(unsigned char key, int x, int y); 
 
+Point** pts3;
+Point* modify;
+int nbr = 4;
 
 int main(int argc, char **argv) 
 {  
@@ -88,6 +91,14 @@ GLvoid initGL()
 // à initialiser
 void init_scene()
 {
+   glPointSize(3);
+
+   pts3 = new Point*[nbr];
+  pts3[0] = new Point(0,0,0);
+  pts3[1] = new Point(1,2,0);
+  pts3[2] = new Point(3,3,0);
+  pts3[3] = new Point(2,2,0);
+  modify = pts3[0];
 }
 
 // fonction de call-back pour l´affichage dans la fenêtre
@@ -133,12 +144,33 @@ GLvoid window_key(unsigned char key, int x, int y)
   case KEY_ESC:  
     exit(1);                    
     break; 
-    
+
+  case 97: // a
+  modify = pts3[0]; break;
+  case 122: // z
+   modify = pts3[1]; break;
+  case 101: // e
+   modify = pts3[2]; break;
+  case 114: // r
+   modify = pts3[3]; break;
+
+  case 111: // o (haut)
+    modify->setY(modify->getY()+.4); break;
+  case 108: // l (bas)
+     modify->setY(modify->getY()-.4); break;
+  case 107: // k (gauche)
+     modify->setX(modify->getX()-.4); break;
+  case 109: // k (droite)
+     modify->setX(modify->getX()+.4); break;
+
   default:
     printf ("La touche %d n´est pas active.\n", key);
     break;
   }     
+
+  render_scene();
 }
+
 
 
 
@@ -148,25 +180,15 @@ GLvoid window_key(unsigned char key, int x, int y)
 void render_scene()
 {
 
-	Point *a = new Point(2, 2, 0);
-  glPointSize(3);
-  glColor3f(0, 1.0, 1.0);
-
-  //Point** pts = hermiteCurve(new Point(0,0,1), new Point(2,0,0), new Vector(1, 1, 0), new Vector(1, -1, 0), 100);
-  //drawCurve(pts, 100);
-
-  int nbr = 4;
-  Point** pts3 = new Point*[nbr];
-  pts3[0] = new Point(0,0,0);
-  pts3[1] = new Point(1,2,0);
-  pts3[2] = new Point(3,3,0);
-  pts3[3] = new Point(2,2,0);
-
+  glClear(GL_COLOR_BUFFER_BIT);
   Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
+
+    glColor3f(0, 1.0, 1.0);
   drawCurve(pts2, 10);
+
   glColor3f(1.0, 0, 0);
   drawCurve(pts3, nbr);
-
+  glFlush();
 
 }
 

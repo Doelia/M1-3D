@@ -16,6 +16,7 @@ void drawCurve(Point** tab, long nbPoints) {
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < nbPoints; ++i) {
 		drawPoint(tab[i]);
+		cout << "tab[" << i << "] = " << *tab[i] << endl;
 	}
 	glEnd();
 }
@@ -53,7 +54,8 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 		double u = 1.0/nbU * (double) j;
 		Point* p = new Point();
 		for (int i = 0; i < nControl; ++i) {
-			double Bni = (fact(nControl) / (fact(i) * fact(nControl-i))) * pow(u, i) * pow(1-u, nControl-i);
+			double n = nControl-1;
+			double Bni = (fact(n) / (fact(i) * fact(n-i))) * pow(u, i) * pow(1-u, n-i);
 			p->setX(p->getX() + Bni*tab[i]->getX());
 			p->setY(p->getY() + Bni*tab[i]->getY());
 			p->setZ(p->getZ() + Bni*tab[i]->getZ());

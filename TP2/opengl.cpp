@@ -29,9 +29,9 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 #define HEIGHT 480
 
 // Définition de la couleur de la fenêtre
-#define RED   0
-#define GREEN 0
-#define BLUE  0
+#define RED   0.15
+#define GREEN 0.15
+#define BLUE  0.15
 #define ALPHA 1
 
 
@@ -117,9 +117,9 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
   // ici, vous verrez pendant le cours sur les projections qu'en modifiant les valeurs, il est
   // possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
   // de trop grosse taille par rapport à la fenêtre.
-  int size = 10;
-  //glOrtho(-size, size, -size, size, -size, size);
-  glOrtho(0, size, 0, size, 0, size);
+  int size = 2;
+  glOrtho(0, size, 0, size, -2, 2);
+  //glOrtho(0, size, 0, size, 0, size);
 
   // toutes les transformations suivantes s´appliquent au modèle de vue 
   glMatrixMode(GL_MODELVIEW);
@@ -147,16 +147,13 @@ GLvoid window_key(unsigned char key, int x, int y)
 /////////////////////////////////////////////////////////////////////////////////////////
 void render_scene()
 {
-//Définition de la couleur
- glColor3f(1.0, 1.0, 1.0);
 
 	Point *a = new Point(2, 2, 0);
+  glPointSize(3);
+  glColor3f(0, 1.0, 1.0);
 
   Point** pts = hermiteCurve(new Point(0,0,1), new Point(2,0,0), new Vector(1, 1, 0), new Vector(1, -1, 0), 100);
-
-	glPointSize(3);
-  glColor3f(0, 1.0, 1.0);
-//  drawCurve(pts, 100);
+  drawCurve(pts, 100);
 
 
 }

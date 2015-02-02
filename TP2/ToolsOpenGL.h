@@ -13,7 +13,7 @@ void drawPoint(Coord* c) {
 }
 
 void drawCurve(Point** tab, long nbPoints) {
-	glBegin(GL_LINES);
+	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < nbPoints; ++i) {
 		drawPoint(tab[i]);
 	}
@@ -22,9 +22,8 @@ void drawCurve(Point** tab, long nbPoints) {
 
 Point** hermiteCurve(Point* p0, Point* p1, Vector* v0, Vector* v1, long nbU) {
 	Point** pts = new Point*[nbU];
-	for (int i = 0; i < nbU; ++i)
-	{
-		double u = 1/nbU * i;
+	for (int i = 0; i < nbU; ++i) {
+		double u = 1.0/nbU * (double) i;
 
 		double f1 = 2*pow(u,3) - 3*pow(u,2) + 1;
 		double f2 = -2*pow(u,3) + 3*pow(u,2);
@@ -36,14 +35,12 @@ Point** hermiteCurve(Point* p0, Point* p1, Vector* v0, Vector* v1, long nbU) {
 			f1*p0->getY() + f2*p1->getY() + f3*v0->getY() + f4*v1->getY(),
 			f1*p0->getZ() + f2*p1->getZ() + f3*v0->getZ() + f4*v1->getZ()
 		);
-
-		cout << "point " << i << " = " << *pts[i] << endl;
-
-		drawPoint(pts[i]);
-
 	}
+	return pts;
+}
 
-
+Point** BezierCurveByBernstein(Point* TabControlPoint, long nbControlPoint, long nbU) {
+	
 }
 
 #endif

@@ -8,7 +8,7 @@ class Point : public Coord {
 private:
 public:
 	Point(double x, double y, double z) : Coord(x, y, z) {};
-	Point();
+	Point() : Coord() {};
 	Point(Point& v) : Coord(v) {};
 
 	Point* projectOnLine(Point*, Point*);

@@ -39,8 +39,34 @@ Point** hermiteCurve(Point* p0, Point* p1, Vector* v0, Vector* v1, long nbU) {
 	return pts;
 }
 
-Point** BezierCurveByBernstein(Point* TabControlPoint, long nbControlPoint, long nbU) {
-	
+double fact(double n) {
+	if (n == 0) {
+		return 1.0;
+	}
+	return n*fact(n-1);
+}
+
+Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
+	Point** pts = new Point*[nbU];
+
+	for (int j = 0; j < nbU; ++j) {
+		double u = 1.0/nbU * (double) j;
+		Point* p = new Point();
+		for (double i = 0; i < nControl; ++i) {
+			double Bni = (fact(nControl) / fact(i) * (nControl-i)) * pow(u, i) * pow(1-u, nControl-i);
+
+			int iTab = (int) i;
+			p->setX(p->getX() + Bni*tab[iTab]->getX());
+			p->setY(p->getY() + Bni*tab[iTab]->getY());
+			p->setZ(p->getZ() + Bni*tab[iTab]->getZ());
+		}
+		pts[j] = p;
+
+		cout << "pts[" << j << "] = " << *pts[j] << endl;
+
+	}
+	return pts;
+
 }
 
 #endif

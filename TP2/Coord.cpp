@@ -10,7 +10,9 @@ Coord::Coord(double x, double y, double z) {
 }
 
 Coord::Coord() {
-	
+	this->x = 0;
+	this->y = 0;
+	this->z = 0;
 }
 
 void Coord::setX(double x) {

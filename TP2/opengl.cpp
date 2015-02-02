@@ -117,7 +117,7 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
   // ici, vous verrez pendant le cours sur les projections qu'en modifiant les valeurs, il est
   // possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
   // de trop grosse taille par rapport à la fenêtre.
-  int size = 2;
+  int size = 5;
   glOrtho(0, size, 0, size, -2, 2);
   //glOrtho(0, size, 0, size, 0, size);
 
@@ -152,8 +152,20 @@ void render_scene()
   glPointSize(3);
   glColor3f(0, 1.0, 1.0);
 
-  Point** pts = hermiteCurve(new Point(0,0,1), new Point(2,0,0), new Vector(1, 1, 0), new Vector(1, -1, 0), 100);
-  drawCurve(pts, 100);
+  //Point** pts = hermiteCurve(new Point(0,0,1), new Point(2,0,0), new Vector(1, 1, 0), new Vector(1, -1, 0), 100);
+  //drawCurve(pts, 100);
+
+  int nbr = 4;
+  Point** pts3 = new Point*[nbr];
+  pts3[0] = new Point(0,0,0);
+  pts3[1] = new Point(1,2,0);
+  pts3[2] = new Point(3,3,0);
+  pts3[3] = new Point(2,2,0);
+
+  Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
+  drawCurve(pts2, 10);
+  glColor3f(1.0, 0, 0);
+  drawCurve(pts3, nbr);
 
 
 }

@@ -52,13 +52,11 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 	for (int j = 0; j < nbU; ++j) {
 		double u = 1.0/nbU * (double) j;
 		Point* p = new Point();
-		for (double i = 0; i < nControl; ++i) {
+		for (int i = 0; i < nControl; ++i) {
 			double Bni = (fact(nControl) / (fact(i) * fact(nControl-i))) * pow(u, i) * pow(1-u, nControl-i);
-
-			int iTab = (int) i;
-			p->setX(p->getX() + Bni*tab[iTab]->getX());
-			p->setY(p->getY() + Bni*tab[iTab]->getY());
-			p->setZ(p->getZ() + Bni*tab[iTab]->getZ());
+			p->setX(p->getX() + Bni*tab[i]->getX());
+			p->setY(p->getY() + Bni*tab[i]->getY());
+			p->setZ(p->getZ() + Bni*tab[i]->getZ());
 		}
 		pts[j] = p;
 

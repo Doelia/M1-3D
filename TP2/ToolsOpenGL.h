@@ -70,22 +70,18 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 Point* getPt(Point* a, Point* b, double u) {
 	Vector* v = new Vector(a, b);
 	v->diviseNorme(u);
-	cout << "vector = " << v << endl;
 	Point* out = new Point(	v->getX() + a->getX(),
 							v->getY() + a->getY(),
 							v->getZ() + a->getZ());
-	cout << "out = " << out << endl;
 	return out;
 }
 
 Point** getPos(Point** tab, int nbrPoints, double u) {
-	cout << "nbrPoints =" << nbrPoints << endl;
 	if (nbrPoints == 1) {
 		return tab;
 	} else {
 		Point** pts = new Point*[nbrPoints-1];
 		for (int i = 0; i < nbrPoints-1; ++i) {
-			cout << "calcul point " << i << endl;
 			pts[i] = getPt(tab[i], tab[i+1], u);
 		}
 		return getPos(pts, nbrPoints-1, u);
@@ -98,7 +94,6 @@ Point** bezierCurveByCasteljau(Point** tab, long nControl, long nbU) {
 
 	for (int j = 0; j < nbU; ++j) {
 		double u = 1.0/(nbU-1) * (double) j;
-		cout << "calcul u = " << u << endl;
 		pts[j] = *getPos(tab, nControl, u);
 
 	}

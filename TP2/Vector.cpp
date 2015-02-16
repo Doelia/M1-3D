@@ -18,9 +18,9 @@ void Vector::normalize() {
 }
 
 void Vector::diviseNorme(double diviser) {
-	x /= diviser;
-	y /= diviser;
-	z /= diviser;
+	x *= diviser;
+	y *= diviser;
+	z *= diviser;
 }
 
 double Vector::getNorme() {

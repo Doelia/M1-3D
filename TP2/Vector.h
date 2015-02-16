@@ -15,6 +15,7 @@ public:
 	double getNorme();
 	double getAngle(Vector*);
 	void normalize();
+	void diviseNorme(double diviser);
 	double getScalar(Vector*);
 	Vector* getProduitVectoriel(Vector*);
 

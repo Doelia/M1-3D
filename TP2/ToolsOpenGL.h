@@ -16,7 +16,6 @@ void drawCurve(Point** tab, long nbPoints) {
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < nbPoints; ++i) {
 		drawPoint(tab[i]);
-		cout << "tab[" << i << "] = " << *tab[i] << endl;
 	}
 	glEnd();
 }
@@ -24,7 +23,7 @@ void drawCurve(Point** tab, long nbPoints) {
 Point** hermiteCurve(Point* p0, Point* p1, Vector* v0, Vector* v1, long nbU) {
 	Point** pts = new Point*[nbU];
 	for (int i = 0; i < nbU; ++i) {
-		double u = 1.0/nbU * (double) i;
+		double u = 1.0/(nbU-1) * (double) i;
 
 		double f1 = 2*pow(u,3) - 3*pow(u,2) + 1;
 		double f2 = -2*pow(u,3) + 3*pow(u,2);
@@ -48,13 +47,15 @@ double fact(double n) {
 }
 
 Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
+
+	double n = nControl-1;
+
 	Point** pts = new Point*[nbU];
 
 	for (int j = 0; j < nbU; ++j) {
-		double u = 1.0/nbU * (double) j;
+		double u = 1.0/(nbU-1) * (double) j;
 		Point* p = new Point();
-		for (int i = 0; i < nControl; ++i) {
-			double n = nControl-1;
+		for (int i = 0; i <= n; ++i) {
 			double Bni = (fact(n) / (fact(i) * fact(n-i))) * pow(u, i) * pow(1-u, n-i);
 			p->setX(p->getX() + Bni*tab[i]->getX());
 			p->setY(p->getY() + Bni*tab[i]->getY());
@@ -64,7 +65,45 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 
 	}
 	return pts;
-
 }
+
+Point* getPt(Point* a, Point* b, double u) {
+	Vector* v = new Vector(a, b);
+	v->diviseNorme(u);
+	cout << "vector = " << v << endl;
+	Point* out = new Point(	v->getX() + a->getX(),
+							v->getY() + a->getY(),
+							v->getZ() + a->getZ());
+	cout << "out = " << out << endl;
+	return out;
+}
+
+Point** getPos(Point** tab, int nbrPoints, double u) {
+	cout << "nbrPoints =" << nbrPoints << endl;
+	if (nbrPoints == 1) {
+		return tab;
+	} else {
+		Point** pts = new Point*[nbrPoints-1];
+		for (int i = 0; i < nbrPoints-1; ++i) {
+			cout << "calcul point " << i << endl;
+			pts[i] = getPt(tab[i], tab[i+1], u);
+		}
+		return getPos(pts, nbrPoints-1, u);
+	}
+}
+
+
+Point** bezierCurveByCasteljau(Point** tab, long nControl, long nbU) {
+	Point** pts = new Point*[nbU];
+
+	for (int j = 0; j < nbU; ++j) {
+		double u = 1.0/(nbU-1) * (double) j;
+		cout << "calcul u = " << u << endl;
+		pts[j] = *getPos(tab, nControl, u);
+
+	}
+	return pts;
+}
+
 
 #endif

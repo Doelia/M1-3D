@@ -48,6 +48,8 @@ GLvoid window_reshape(GLsizei width, GLsizei height);
 GLvoid window_key(unsigned char key, int x, int y); 
 
 Point** pts3;
+Point** pts4;
+Point*** inChange = &pts3;
 Point* modify;
 int nbr = 4;
 
@@ -91,14 +93,22 @@ GLvoid initGL()
 // à initialiser
 void init_scene()
 {
-   glPointSize(3);
+ glPointSize(3);
 
-   pts3 = new Point*[nbr];
-  pts3[0] = new Point(0,0,0);
-  pts3[1] = new Point(1,2,0);
-  pts3[2] = new Point(3,3,0);
-  pts3[3] = new Point(2,2,0);
-  modify = pts3[0];
+ pts3 = new Point*[nbr];
+ pts3[0] = new Point(0,0,0);
+ pts3[1] = new Point(1,2,0);
+ pts3[2] = new Point(3,3,0);
+ pts3[3] = new Point(2,2,0);
+
+ pts4 = new Point*[nbr];
+ pts4[0] = new Point(1,0,0);
+ pts4[1] = new Point(2,2,0);
+ pts4[2] = new Point(4,3,0);
+ pts4[3] = new Point(3,2,0);
+
+
+ modify = pts3[0];
 }
 
 // fonction de call-back pour l´affichage dans la fenêtre
@@ -139,34 +149,40 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
 GLvoid window_key(unsigned char key, int x, int y) 
 {  
   switch (key) {    
-  case KEY_ESC:  
+    case KEY_ESC:  
     exit(1);                    
     break; 
 
   case 97: // a
-  modify = pts3[0]; break;
+  modify = (*inChange)[0]; break;
   case 122: // z
-   modify = pts3[1]; break;
+  modify = (*inChange)[1]; break;
   case 101: // e
-   modify = pts3[2]; break;
+  modify = (*inChange)[2]; break;
   case 114: // r
-   modify = pts3[3]; break;
+  modify = (*inChange)[3]; break;
 
   case 111: // o (haut)
-    modify->setY(modify->getY()+.4); break;
+  modify->setY(modify->getY()+.1); break;
   case 108: // l (bas)
-     modify->setY(modify->getY()-.4); break;
+  modify->setY(modify->getY()-.1); break;
   case 107: // k (gauche)
-     modify->setX(modify->getX()-.4); break;
+  modify->setX(modify->getX()-.1); break;
   case 109: // k (droite)
-     modify->setX(modify->getX()+.4); break;
+  modify->setX(modify->getX()+.1); break;
 
-  default:
-    printf ("La touche %d n´est pas active.\n", key);
-    break;
-  }     
 
-  render_scene();
+ case 113: // q (changer couleur)
+ inChange = &pts3; break;
+ case 115: // s (changer couleur)
+ inChange = &pts4; break;
+
+ default:
+ printf ("La touche %d n´est pas active.\n", key);
+ break;
+}     
+
+render_scene();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -177,16 +193,21 @@ void render_scene()
 
   glClear(GL_COLOR_BUFFER_BIT);
 
-  // BEZIER
-  //Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
-  //std::function<Point*(double)> f = bezierCurveByBernstein(pts3, nbr);
+  std::function<Point*(double)> f1 = bezierCurveByBernstein(pts3, nbr);
+  std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
+  std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
 
-  Point** pts2 = discretiser(bezierCurveByBernstein(pts3, nbr), 10);
+  Point** pts2 = surface(f1,f3, 200, 200);
+  //Point** pts2 = discretiser(f1,10);
   
   glColor3f(0, 1.0, 1.0);
-  drawCurve(pts2, 10);
+  drawCurve(pts2, 200*200);
   glColor3f(1.0, 0, 0);
   drawCurve(pts3, nbr);
+  glColor3f(1.0, 1.0, 0);
+  drawCurve(pts4, nbr);
+
+
   glFlush();
 
 }

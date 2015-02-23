@@ -21,6 +21,14 @@ void drawCurve(Point** tab, long nbPoints) {
 	glEnd();
 }
 
+void drawPoints(Point** tab, long nbPoints) {
+	glBegin(GL_POINTS);
+	for (int i = 0; i < nbPoints; ++i) {
+		drawPoint(tab[i]);
+	}
+	glEnd();
+}
+
 
 double fact(double n) {
 	if (n == 0) {

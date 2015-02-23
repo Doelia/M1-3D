@@ -73,6 +73,10 @@ Point* getPt(Point* a, Point* b, double u) {
 	Point* out = new Point(	v->getX() + a->getX(),
 							v->getY() + a->getY(),
 							v->getZ() + a->getZ());
+	glBegin(GL_LINE_STRIP);
+		drawPoint(a);
+		drawPoint(b);
+	glEnd();
 	return out;
 }
 
@@ -95,8 +99,8 @@ Point** bezierCurveByCasteljau(Point** tab, long nControl, long nbU) {
 	for (int j = 0; j < nbU; ++j) {
 		double u = 1.0/(nbU-1) * (double) j;
 		pts[j] = *getPos(tab, nControl, u);
-
 	}
+
 	return pts;
 }
 

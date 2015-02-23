@@ -49,7 +49,7 @@ GLvoid window_key(unsigned char key, int x, int y);
 
 Point** pts3;
 Point* modify;
-int nbr = 4;
+int nbr = 5;
 
 int main(int argc, char **argv) 
 {  
@@ -98,6 +98,7 @@ void init_scene()
   pts3[1] = new Point(1,2,0);
   pts3[2] = new Point(3,3,0);
   pts3[3] = new Point(2,2,0);
+  pts3[4] = new Point(3,2,0);
   modify = pts3[0];
 }
 
@@ -153,6 +154,8 @@ GLvoid window_key(unsigned char key, int x, int y)
    modify = pts3[2]; break;
   case 114: // r
    modify = pts3[3]; break;
+    case 113: // q (changer couleur)
+  modify = pts3[4]; break;
 
   case 111: // o (haut)
     modify->setY(modify->getY()+.4); break;

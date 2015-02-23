@@ -197,11 +197,11 @@ void render_scene()
   std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
   std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
 
-  Point** pts2 = surface(f1,f3, 200, 200);
+  Point** pts2 = surface(f1,f3, 70, 30);
   //Point** pts2 = discretiser(f1,10);
   
   glColor3f(0, 1.0, 1.0);
-  drawCurve(pts2, 200*200);
+  drawPoints(pts2, 70*30);
   glColor3f(1.0, 0, 0);
   drawCurve(pts3, nbr);
   glColor3f(1.0, 1.0, 0);

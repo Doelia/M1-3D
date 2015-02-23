@@ -70,13 +70,17 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 Point* getPt(Point* a, Point* b, double u) {
 	Vector* v = new Vector(a, b);
 	v->diviseNorme(u);
+
 	Point* out = new Point(	v->getX() + a->getX(),
 							v->getY() + a->getY(),
 							v->getZ() + a->getZ());
-	glBegin(GL_LINE_STRIP);
-		drawPoint(a);
-		drawPoint(b);
-	glEnd();
+
+	if (u == .5) {
+		glBegin(GL_LINE_STRIP);
+			drawPoint(a);
+			drawPoint(b);
+		glEnd();
+	}
 	return out;
 }
 

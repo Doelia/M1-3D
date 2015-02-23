@@ -47,140 +47,147 @@ GLvoid window_display();
 GLvoid window_reshape(GLsizei width, GLsizei height); 
 GLvoid window_key(unsigned char key, int x, int y); 
 
+Point** pts3;
+Point* modify;
+int nbr = 4;
+
 int main(int argc, char **argv) 
 {  
-// initialisation  des paramètres de GLUT en fonction
-// des arguments sur la ligne de commande
-	glutInit(&argc, argv);
-	glutInitDisplayMode(GLUT_RGBA);
+  // initialisation  des paramètres de GLUT en fonction
+  // des arguments sur la ligne de commande
+  glutInit(&argc, argv);
+  glutInitDisplayMode(GLUT_RGBA);
 
-// définition et création de la fenêtre graphique, ainsi que son titre
-	glutInitWindowSize(WIDTH, HEIGHT);
-	glutInitWindowPosition(0, 0);
-	glutCreateWindow("Premier exemple : carré");
+  // définition et création de la fenêtre graphique, ainsi que son titre
+  glutInitWindowSize(WIDTH, HEIGHT);
+  glutInitWindowPosition(0, 0);
+  glutCreateWindow("Premier exemple : carré");
 
-// initialisation de OpenGL et de la scène
-	initGL();  
-	init_scene();
+  // initialisation de OpenGL et de la scène
+  initGL();  
+  init_scene();
 
-// choix des procédures de callback pour 
-// le tracé graphique
-	glutDisplayFunc(&window_display);
-// le redimensionnement de la fenêtre
-	glutReshapeFunc(&window_reshape);
-// la gestion des événements clavier
-	glutKeyboardFunc(&window_key);
+  // choix des procédures de callback pour 
+  // le tracé graphique
+  glutDisplayFunc(&window_display);
+  // le redimensionnement de la fenêtre
+  glutReshapeFunc(&window_reshape);
+  // la gestion des événements clavier
+  glutKeyboardFunc(&window_key);
 
-// la boucle prinicipale de gestion des événements utilisateur
-	glutMainLoop();  
+  // la boucle prinicipale de gestion des événements utilisateur
+  glutMainLoop();  
 
-	return 1;
+  return 1;
 }
 
 // initialisation du fond de la fenêtre graphique : noir opaque
 GLvoid initGL() 
 {
-	glClearColor(RED, GREEN, BLUE, ALPHA);        
+  glClearColor(RED, GREEN, BLUE, ALPHA);        
 }
 
 // Initialisation de la scene. Peut servir à stocker des variables de votre programme
 // à initialiser
 void init_scene()
 {
-	glPointSize(3)
-;
+   glPointSize(3);
+
+   pts3 = new Point*[nbr];
+  pts3[0] = new Point(0,0,0);
+  pts3[1] = new Point(1,2,0);
+  pts3[2] = new Point(3,3,0);
+  pts3[3] = new Point(2,2,0);
+  modify = pts3[0];
 }
 
 // fonction de call-back pour l´affichage dans la fenêtre
 
 GLvoid window_display()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	glLoadIdentity();
+  glClear(GL_COLOR_BUFFER_BIT);
+  glLoadIdentity();
 
-// C'est l'endroit où l'on peut dessiner. On peut aussi faire appel
-// à une fonction (render_scene() ici) qui contient les informations 
-// que l'on veut dessiner
-	render_scene();
+  // C'est l'endroit où l'on peut dessiner. On peut aussi faire appel
+  // à une fonction (render_scene() ici) qui contient les informations 
+  // que l'on veut dessiner
+  render_scene();
 
-// trace la scène grapnique qui vient juste d'être définie
-	glFlush();
+  // trace la scène grapnique qui vient juste d'être définie
+  glFlush();
 }
 
 // fonction de call-back pour le redimensionnement de la fenêtre
 
 GLvoid window_reshape(GLsizei width, GLsizei height)
 {  
-	glViewport(0, 0, width, height);
+  glViewport(0, 0, width, height);
 
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-// ici, vous verrez pendant le cours sur les projections qu'en modifiant les valeurs, il est
-// possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
-// de trop grosse taille par rapport à la fenêtre.
-	int size = 5;
-	glOrtho(0, size, 0, size, -2, 2);
-//glOrtho(0, size, 0, size, 0, size);
+  glMatrixMode(GL_PROJECTION);
+  glLoadIdentity();
+  // ici, vous verrez pendant le cours sur les projections qu'en modifiant les valeurs, il est
+  // possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
+  // de trop grosse taille par rapport à la fenêtre.
+  int size = 5;
+  glOrtho(0, size, 0, size, -2, 2);
+  //glOrtho(0, size, 0, size, 0, size);
 
-// toutes les transformations suivantes s´appliquent au modèle de vue 
-	glMatrixMode(GL_MODELVIEW);
+  // toutes les transformations suivantes s´appliquent au modèle de vue 
+  glMatrixMode(GL_MODELVIEW);
 }
-
-// fonction de call-back pour la gestion des événements clavier
 
 GLvoid window_key(unsigned char key, int x, int y) 
 {  
-	switch (key) {    
-		case KEY_ESC:  
-		exit(1);                    
-		break; 
-		case 97: // a
-		modify = pts3[0]; break;
-		case 122: // z
-		modify = pts3[1]; break;
-		case 101: // e
-		modify = pts3[2]; break;
-		case 114: // r
-		modify = pts3[3]; break;
-		case 111: // o (haut)
-		modify->setY(modify->getY()+.4); break;
-		case 108: // l (bas)
-		modify->setY(modify->getY()-.4); break;
-		case 107: // k (gauche)
-		modify->setX(modify->getX()-.4); break;
-		case 109: // k (droite)
-		modify->setX(modify->getX()+.4); break;
-		default:
-		printf ("La touche %d n´est pas active.\n", key);
-		break;
-	}     
+  switch (key) {    
+  case KEY_ESC:  
+    exit(1);                    
+    break; 
 
-	render_scene();
+  case 97: // a
+  modify = pts3[0]; break;
+  case 122: // z
+   modify = pts3[1]; break;
+  case 101: // e
+   modify = pts3[2]; break;
+  case 114: // r
+   modify = pts3[3]; break;
+
+  case 111: // o (haut)
+    modify->setY(modify->getY()+.4); break;
+  case 108: // l (bas)
+     modify->setY(modify->getY()-.4); break;
+  case 107: // k (gauche)
+     modify->setX(modify->getX()-.4); break;
+  case 109: // k (droite)
+     modify->setX(modify->getX()+.4); break;
+
+  default:
+    printf ("La touche %d n´est pas active.\n", key);
+    break;
+  }     
+
+  render_scene();
 }
-
-
-
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Fonction que vous allez modifier afin de dessiner
 /////////////////////////////////////////////////////////////////////////////////////////
-void render_scene() {
-	
-	pts3 = new Point*[nbr];
-	pts3[0] = new Point(0,0,0);
-	pts3[1] = new Point(1,2,0);
-	pts3[2] = new Point(3,3,0);
-	pts3[3] = new Point(2,2,0);
+void render_scene()
+{
 
-	glClear(GL_COLOR_BUFFER_BIT);
-	Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
+  glClear(GL_COLOR_BUFFER_BIT);
 
-	glColor3f(0, 1.0, 1.0);
-	drawCurve(pts2, 10);
+  // BEZIER
+  //Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
+  //std::function<Point*(double)> f = bezierCurveByBernstein(pts3, nbr);
 
-	glColor3f(1.0, 0, 0);
-	drawCurve(pts3, nbr);
-	glFlush();
+  Point** pts2 = disctiserFonction(bezierCurveByBernstein(pts3, nbr), 10);
+  
+  glColor3f(0, 1.0, 1.0);
+  drawCurve(pts2, 10);
+  glColor3f(1.0, 0, 0);
+  drawCurve(pts3, nbr);
+  glFlush();
 
 }
 

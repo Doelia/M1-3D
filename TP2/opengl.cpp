@@ -171,9 +171,6 @@ GLvoid window_key(unsigned char key, int x, int y)
   render_scene();
 }
 
-
-
-
 //////////////////////////////////////////////////////////////////////////////////////////
 // Fonction que vous allez modifier afin de dessiner
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -181,11 +178,18 @@ void render_scene()
 {
 
   glClear(GL_COLOR_BUFFER_BIT);
-  Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
 
-    glColor3f(0, 1.0, 1.0);
+  // HERMITE
+  glColor3f(0, 0, 1.0);
+  Point** ptsHermite = hermiteCurve(new Point(0,0,0), new Point(2,0,0), new Vector(1,1,0), new Vector(1,-1,0), 20);
+  drawCurve(ptsHermite, 10);
+
+  // BEZIER
+  //Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
+  Point** pts2 = bezierCurveByCasteljau(pts3, nbr, 10);
+  
+  glColor3f(0, 1.0, 1.0);
   drawCurve(pts2, 10);
-
   glColor3f(1.0, 0, 0);
   drawCurve(pts3, nbr);
   glFlush();

@@ -7,6 +7,7 @@
 #include "Vector.h"
 #include "Point.h"
 #include "GlutIncluder.h"
+#include <functional>
 
 void drawPoint(Coord* c) {
 	glVertex3f(c->getX(), c->getY(), c->getZ());
@@ -16,7 +17,6 @@ void drawCurve(Point** tab, long nbPoints) {
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < nbPoints; ++i) {
 		drawPoint(tab[i]);
-		cout << "tab[" << i << "] = " << *tab[i] << endl;
 	}
 	glEnd();
 }
@@ -24,7 +24,7 @@ void drawCurve(Point** tab, long nbPoints) {
 Point** hermiteCurve(Point* p0, Point* p1, Vector* v0, Vector* v1, long nbU) {
 	Point** pts = new Point*[nbU];
 	for (int i = 0; i < nbU; ++i) {
-		double u = 1.0/nbU * (double) i;
+		double u = 1.0/(nbU-1) * (double) i;
 
 		double f1 = 2*pow(u,3) - 3*pow(u,2) + 1;
 		double f2 = -2*pow(u,3) + 3*pow(u,2);
@@ -47,24 +47,95 @@ double fact(double n) {
 	return n*fact(n-1);
 }
 
-Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
-	Point** pts = new Point*[nbU];
+std::function<Point*(double)> bezierCurveByBernstein(Point** tab, long nControl) {
 
-	for (int j = 0; j < nbU; ++j) {
-		double u = 1.0/nbU * (double) j;
-		Point* p = new Point();
-		for (int i = 0; i < nControl; ++i) {
-			double n = nControl-1;
+	auto curbeB = [] (Point** tab, long nControl) -> std::function<Point*(double)>
+  { return ([=] (int u) {
+
+  	double n = nControl-1;
+
+	  Point* p = new Point();
+		for (int i = 0; i <= n; ++i) {
 			double Bni = (fact(n) / (fact(i) * fact(n-i))) * pow(u, i) * pow(1-u, n-i);
 			p->setX(p->getX() + Bni*tab[i]->getX());
 			p->setY(p->getY() + Bni*tab[i]->getY());
 			p->setZ(p->getZ() + Bni*tab[i]->getZ());
 		}
-		pts[j] = p;
+		return p;
+
+
+  }); };
+  auto f = curbeB(tab, nControl);
+  return f;
+
+
+}
+
+Point** disctiserFonction(std::function<Point*(double)> f, int nbU) {
+	Point** pts = new Point*[nbU];
+	for (int i = 0; i < nbU; ++i) {
+		double u = 1.0/(nbU-1) * (double) i;
+		pts[i] = f(u);
+	}
+	return pts;
+}
+
+
+
+Point* getPt(Point* a, Point* b, double u) {
+	Vector* v = new Vector(a, b);
+	v->diviseNorme(u);
+	Point* out = new Point(	v->getX() + a->getX(),
+							v->getY() + a->getY(),
+							v->getZ() + a->getZ());
+	return out;
+}
+
+Point** getPos(Point** tab, int nbrPoints, double u) {
+	if (nbrPoints == 1) {
+		return tab;
+	} else {
+		Point** pts = new Point*[nbrPoints-1];
+		for (int i = 0; i < nbrPoints-1; ++i) {
+			pts[i] = getPt(tab[i], tab[i+1], u);
+		}
+		return getPos(pts, nbrPoints-1, u);
+	}
+}
+
+
+Point** bezierCurveByCasteljau(Point** tab, long nControl, long nbU) {
+	Point** pts = new Point*[nbU];
+
+	for (int j = 0; j < nbU; ++j) {
+		double u = 1.0/(nbU-1) * (double) j;
+		pts[j] = *getPos(tab, nControl, u);
 
 	}
 	return pts;
-
 }
+
+//// TP3
+
+
+
+
+
+
+
+/*
+void surfaceCylindrique(f1, f2, int nbrPoints) {
+	Point** pts = new Point*[nbU];
+	for (int i = 0; i < nbU; ++i) {
+		for (int j = 0; j < nbU; ++j) {
+			double u = 1.0/(nbU-1) * (double) i;
+			double v = 1.0/(nbU-1) * (double) j;
+			
+
+		}
+	}
+	return pts;
+}
+*/
 
 #endif

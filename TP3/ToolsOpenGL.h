@@ -50,7 +50,7 @@ double fact(double n) {
 std::function<Point*(double)> bezierCurveByBernstein(Point** tab, long nControl) {
 
 	auto curbeB = [] (Point** tab, long nControl) -> std::function<Point*(double)>
-  { return ([=] (int u) {
+  { return ([=] (double u) {
 
   	double n = nControl-1;
 
@@ -71,7 +71,7 @@ std::function<Point*(double)> bezierCurveByBernstein(Point** tab, long nControl)
 
 }
 
-Point** disctiserFonction(std::function<Point*(double)> f, int nbU) {
+Point** discretiser(std::function<Point*(double)> f, int nbU) {
 	Point** pts = new Point*[nbU];
 	for (int i = 0; i < nbU; ++i) {
 		double u = 1.0/(nbU-1) * (double) i;
@@ -79,8 +79,6 @@ Point** disctiserFonction(std::function<Point*(double)> f, int nbU) {
 	}
 	return pts;
 }
-
-
 
 Point* getPt(Point* a, Point* b, double u) {
 	Vector* v = new Vector(a, b);

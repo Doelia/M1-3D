@@ -181,7 +181,7 @@ void render_scene()
   //Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
   //std::function<Point*(double)> f = bezierCurveByBernstein(pts3, nbr);
 
-  Point** pts2 = disctiserFonction(bezierCurveByBernstein(pts3, nbr), 10);
+  Point** pts2 = discretiser(bezierCurveByBernstein(pts3, nbr), 10);
   
   glColor3f(0, 1.0, 1.0);
   drawCurve(pts2, 10);

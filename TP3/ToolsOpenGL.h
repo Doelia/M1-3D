@@ -150,20 +150,23 @@ Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double
 Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double u, double v) {
 
 	cout << *ij << ", " << *i_j << ", " << *ij_ << ", " << *i_j_ << endl;
+	//cout << "u=" << u << ", v=" << v << endl;
 	
 	Vector* A = new Vector(ij_, i_j_);
 	A->diviseNorme(u);
 	A->add(ij_);
+	//cout << "A=" << *A << endl;
 
 	Vector* B = new Vector(ij, i_j);
 	B->diviseNorme(u);
 	B->add(ij);
+	//cout << "B=" << *B << endl;
 
 
 	Vector* AB = new Vector(A, B);
 	AB->diviseNorme(1-v);
 	AB->add(A);
-	cout << "P = " << *AB << endl;
+	//cout << "P = " << *AB << endl;
 
 	return new Point(*AB);
 }
@@ -172,22 +175,27 @@ Point* getPointOnCoord(int x, int y, Point** tabCtrlU, Point** tabCtrlV) {
 	int xMin = (x == 0)?0:x-1;
 	int yMin = (y == 0)?0:y-1;
 	Vector* X = new Vector(tabCtrlU[xMin], tabCtrlU[x]);
+	cout << "X = " << *X << endl;
 	Vector* Y = new Vector(tabCtrlV[yMin], tabCtrlV[y]);
+	cout << "Y = " << *Y << endl;
 	X->add(Y);
-	X->add(tabCtrlU[xMin]);
+	cout << "tabCtrlU[xMin] = " << *tabCtrlU[xMin] << endl;
+	X->add(tabCtrlV[yMin]);
 	return new Point(*X);
 }
 
-Point* calculPointFromTab(Point*** points, int nbU, int nbV, int u, int v) {
-	cout << "calculPointFromTab(" << nbU << ", " << nbV << ")" << endl;
-	if (nbU == 0 || nbV == 0) {
+Point* calculPointFromTab(Point*** points, int nbU, int nbV, double u, double v) {
+	cout << "calculPointFromTab(" << nbU << ", " << nbV << "), u=" << u << ", v=" << v << endl;
+	if (nbU == 1 || nbV == 1) {
 		return points[0][0]; // TODO
 	} else {
 		Point*** nouv = new Point**[nbU-1];
-		for (int i = 0; i < nbU; ++i) {
-			nouv = new Point**[nbV-1];
+		for (int i = 0; i < nbU-1; ++i) {
+			nouv[i] = new Point*[nbV-1];
 			for (int j = 0; j < nbV-1; ++j) {
-				nouv[i][j] = getPointOnCarreau(points[i][j], points[i+1][j], points[j+1][i], points[j+1][i+1], u , v);
+				nouv[i][j] = new Point();
+				nouv[i][j] = getPointOnCarreau(points[i][j], points[i+1][j], points[i][j+1], points[j+1][i+1], u , v);
+				cout << "nouv[" << i << "," << j << "] = " << *nouv[i][j] << endl;
 			}
 		}
 		return calculPointFromTab(nouv, nbU-1, nbV-1, u, v);
@@ -209,6 +217,7 @@ std::function<Point*(double, double)>  surfaceByCasteljau(
 			points[i] = new Point*[nbV];
 			for (int j = 0; j < nbV; ++j) {
 				points[i][j] = getPointOnCoord(i, j, tabCtrlU, tabCtrlV);
+				cout << "points[" << i << "][" << j << "] = " << *points[i][j] << endl;
 			}
 		}
 

@@ -191,28 +191,29 @@ render_scene();
 void render_scene()
 {
 
+  cout << "========================================================" << endl;
+
+  int nbrPoints = 3;
+
   glClear(GL_COLOR_BUFFER_BIT);
 
-  Point** pU = new Point*[2];
-  Point** pV = new Point*[2];
+  Point** pU = new Point*[3];
+  Point** pV = new Point*[3];
   pU[0] = new Point(1,1,0);
   pU[1] = new Point(2,1,0);
+  pU[2] = new Point(3,1,0);
   pV[0] = new Point(1,1,0);
   pV[1] = new Point(1,2,0);
+  pV[2] = new Point(1,3,0);
 
   std::function<Point*(double)> f1 = bezierCurveByBernstein(pts3, nbr);
   std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
   std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
-  std::function<Point*(double, double)> f4 = surfaceByCasteljau(pU, 2, pV, 2);
 
-
-  Point** pts2 = surface(f1,f3, 70, 30);
   //Point** pts2 = discretiser(f1,10);
-  //Point** pts5 = discretiserDouble(f4,10,10);
 
-
-
-  
+  /*
+  Point** pts2 = surface(f1,f3, 70, 30);
   glColor3f(0, 1.0, 1.0);
   drawPoints(pts2, 70*30);
  // drawPoints(pts5, 10*10);
@@ -222,6 +223,19 @@ void render_scene()
   drawCurve(pts3, nbr);
   glColor3f(1.0, 1.0, 0);
   drawCurve(pts4, nbr);
+  //*/
+
+  //*
+  std::function<Point*(double, double)> f4 = surfaceByCasteljau(pU, 3, pV, 3);
+   Point** pts5 = discretiserDouble(f4,nbrPoints,nbrPoints);
+  glColor3f(0, 1.0, 1.0);
+  drawPoints(pts5, nbrPoints*nbrPoints);
+  glColor3f(1.0, 0, 0);
+  drawPoints(pU, 3);
+  drawPoints(pV, 3);
+  glColor3f(1.0, 1.0, 0);
+
+  //*/
 
 
   glFlush();

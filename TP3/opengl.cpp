@@ -206,22 +206,22 @@ void render_scene()
   std::function<Point*(double, double)> f4 = surfaceByCasteljau(pU, 2, pV, 2);
 
 
-  //Point** pts2 = surface(f1,f3, 70, 30);
+  Point** pts2 = surface(f1,f3, 70, 30);
   //Point** pts2 = discretiser(f1,10);
-  Point** pts5 = discretiserDouble(f4,10,10);
+  //Point** pts5 = discretiserDouble(f4,10,10);
 
 
 
   
   glColor3f(0, 1.0, 1.0);
- // drawPoints(pts2, 70*30);
-  drawPoints(pts5, 10*10);
+  drawPoints(pts2, 70*30);
+ // drawPoints(pts5, 10*10);
   glColor3f(1.0, 0, 0);
-  drawPoints(pU, 2);
-  drawPoints(pV, 2);
-  //drawCurve(pts3, nbr);
+ // drawPoints(pU, 2);
+  //drawPoints(pV, 2);
+  drawCurve(pts3, nbr);
   glColor3f(1.0, 1.0, 0);
-  //drawCurve(pts4, nbr);
+  drawCurve(pts4, nbr);
 
 
   glFlush();

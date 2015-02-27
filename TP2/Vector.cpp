@@ -10,12 +10,17 @@ Vector::Vector(Coord* a, Coord* b) {
 	z = b->getZ() - a->getZ();
 }
 
-
 void Vector::normalize() {
 	double norme = this->getNorme();
 	x /= norme;
 	y /= norme;
 	z /= norme;
+}
+
+void Vector::diviseNorme(double diviser) {
+	x *= diviser;
+	y *= diviser;
+	z *= diviser;
 }
 
 double Vector::getNorme() {
@@ -35,12 +40,9 @@ Vector* Vector::getProduitVectoriel(Vector* v) {
 	);
 }
 
-
 double Vector::getAngle(Vector* v) {
 	return acos(
 		this->getScalar(v)/
 			(this->getNorme() *v->getNorme())
 			);
 }
-
-

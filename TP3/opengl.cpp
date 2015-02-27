@@ -22,7 +22,7 @@ Vous pouvez ensuite y faire référence en spécifiant le chemin dans visual. Vo
 Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h" 
 */
 
-#include "GlutIncluder.h"
+#include "../GlutIncluder.h"
 
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -193,19 +193,35 @@ void render_scene()
 
   glClear(GL_COLOR_BUFFER_BIT);
 
+  Point** pU = new Point*[2];
+  Point** pV = new Point*[2];
+  pU[0] = new Point(1,1,0);
+  pU[1] = new Point(2,1,0);
+  pV[0] = new Point(1,1,0);
+  pV[1] = new Point(1,2,0);
+
   std::function<Point*(double)> f1 = bezierCurveByBernstein(pts3, nbr);
   std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
   std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
+  std::function<Point*(double, double)> f4 = surfaceByCasteljau(pU, 2, pV, 2);
 
-  Point** pts2 = surface(f1,f3, 70, 30);
+
+  //Point** pts2 = surface(f1,f3, 70, 30);
   //Point** pts2 = discretiser(f1,10);
+  Point** pts5 = discretiserDouble(f4,10,10);
+
+
+
   
   glColor3f(0, 1.0, 1.0);
-  drawPoints(pts2, 70*30);
+ // drawPoints(pts2, 70*30);
+  drawPoints(pts5, 10*10);
   glColor3f(1.0, 0, 0);
-  drawCurve(pts3, nbr);
+  drawPoints(pU, 2);
+  drawPoints(pV, 2);
+  //drawCurve(pts3, nbr);
   glColor3f(1.0, 1.0, 0);
-  drawCurve(pts4, nbr);
+  //drawCurve(pts4, nbr);
 
 
   glFlush();

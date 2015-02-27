@@ -6,7 +6,7 @@
 #include <math.h>
 #include "Vector.h"
 #include "Point.h"
-#include "GlutIncluder.h"
+#include "../GlutIncluder.h"
 #include <functional>
 
 void drawPoint(Coord* c) {
@@ -87,6 +87,123 @@ Point** discretiser(std::function<Point*(double)> f, int nbU) {
 	return pts;
 }
 
+Point** discretiserDouble(std::function<Point*(double, double)> f, int nbU, int nbV) {
+	Point** pts = new Point*[nbU*nbV];
+	int cpt = 0;
+	for (int i = 0; i < nbU; ++i) {
+		double u = 1.0/(nbU-1) * (double) i;
+		for (int j = 0; j < nbV; ++j) {
+			double v = 1.0/(nbV-1) * (double) j;
+			pts[cpt++] = f(u, v);
+		}
+	}
+	return pts;
+}
+
+
+/*Point* getPointOnCarreau(Point* a, Point* b, Point *c, double u) {
+	Vector* ab = new Vector(a, b);
+	Vector* ac = new Vector(a, c);
+	ab->diviseNorme(u);
+	ac->diviseNorme(u);
+
+	ab->add(ac);
+
+	return new Point(
+		a->getX() + ab->getX(),
+		a->getY() + ab->getY(),
+		a->getZ() + ab->getZ()
+	);
+}
+*/
+
+/*
+Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double u, double v) {
+
+	cout << *ij << ", " << *i_j << ", " << *ij_ << ", " << *i_j_ << endl;
+	
+	Vector* p = new Vector(*ij_);
+	p->diviseNorme(1-u);
+	Vector* q = new Vector(*i_j_);
+	p->diviseNorme(u);
+	p->add(q);
+	Vector* A = new Vector(*p);
+
+	cout << "A (  " << u << ", " << v << ") = " << *A << endl;
+
+	p = new Vector(*ij);
+	p->diviseNorme(1-u);
+	q = new Vector(*i_j);
+	q->diviseNorme(u);
+	p->add(q);
+	Vector* B = new Vector(*p);
+
+	B->diviseNorme(1-v);
+	A->diviseNorme(u);
+	B->add(A);
+
+	return new Point(*B);
+}
+*/
+
+
+Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double u, double v) {
+
+	cout << *ij << ", " << *i_j << ", " << *ij_ << ", " << *i_j_ << endl;
+	
+	Vector* A = new Vector(ij_, i_j_);
+	A->diviseNorme(u);
+	A->add(ij_);
+
+	Vector* B = new Vector(ij, i_j);
+	B->diviseNorme(u);
+	B->add(ij);
+
+
+	Vector* AB = new Vector(A, B);
+	AB->diviseNorme(1-v);
+	AB->add(A);
+	cout << "V (  " << u << ", " << v << ") = " << *AB << endl;
+
+	return new Point(*AB);
+}
+
+Point* getPointOnCoord(int x, int y, Point** tabCtrlU, Point** tabCtrlV) {
+	int xMin = (x == 0)?0:x-1;
+	int yMin = (y == 0)?0:y-1;
+	Vector* X = new Vector(tabCtrlU[xMin], tabCtrlU[x]);
+	Vector* Y = new Vector(tabCtrlV[yMin], tabCtrlV[y]);
+	X->add(Y);
+	X->add(tabCtrlU[xMin]);
+	return new Point(*X);
+}
+
+
+std::function<Point*(double, double)>  surfaceByCasteljau(
+	Point** tabCtrlU, int nbU,
+	Point** tabCtrlV, int nbV
+	) {
+
+	auto curbeB = [] (Point** tabCtrlU, int nbU, Point** tabCtrlV, int nbV) -> std::function<Point*(double, double)>
+	{ return ([=] (double u, double v) {
+
+		Point*** points = new Point**[nbU];
+
+		for (int i = 0; i < nbU; ++i) {
+			points[i] = new Point*[nbV];
+			for (int j = 0; j < nbV; ++j) {
+				points[i][j] = getPointOnCoord(i, j, tabCtrlU, tabCtrlV);
+			}
+		}
+
+		Point* p = getPointOnCarreau(points[0][0], points[1][0], points[0][1], points[1][1], u, v);
+		return p;
+	}); };
+
+	auto f = curbeB(tabCtrlU, nbU, tabCtrlV, nbV);
+	return f;
+
+}
 
 Point** surface(
 	std::function<Point*(double)> f1,

@@ -10,6 +10,7 @@ public:
 	Point(double x, double y, double z) : Coord(x, y, z) {};
 	Point() : Coord() {};
 	Point(Point& v) : Coord(v) {};
+	Point(Coord& v) : Coord(v) {};
 
 	Point* projectOnLine(Point*, Point*);
 	Point* projectOnLine(Vector*, Point*);

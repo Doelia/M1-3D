@@ -163,7 +163,7 @@ Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double
 	Vector* AB = new Vector(A, B);
 	AB->diviseNorme(1-v);
 	AB->add(A);
-	cout << "V (  " << u << ", " << v << ") = " << *AB << endl;
+	cout << "P = " << *AB << endl;
 
 	return new Point(*AB);
 }
@@ -176,6 +176,22 @@ Point* getPointOnCoord(int x, int y, Point** tabCtrlU, Point** tabCtrlV) {
 	X->add(Y);
 	X->add(tabCtrlU[xMin]);
 	return new Point(*X);
+}
+
+Point* calculPointFromTab(Point*** points, int nbU, int nbV, int u, int v) {
+	cout << "calculPointFromTab(" << nbU << ", " << nbV << ")" << endl;
+	if (nbU == 0 || nbV == 0) {
+		return points[0][0]; // TODO
+	} else {
+		Point*** nouv = new Point**[nbU-1];
+		for (int i = 0; i < nbU; ++i) {
+			nouv = new Point**[nbV-1];
+			for (int j = 0; j < nbV-1; ++j) {
+				nouv[i][j] = getPointOnCarreau(points[i][j], points[i+1][j], points[j+1][i], points[j+1][i+1], u , v);
+			}
+		}
+		return calculPointFromTab(nouv, nbU-1, nbV-1, u, v);
+	}
 }
 
 
@@ -196,7 +212,7 @@ std::function<Point*(double, double)>  surfaceByCasteljau(
 			}
 		}
 
-		Point* p = getPointOnCarreau(points[0][0], points[1][0], points[0][1], points[1][1], u, v);
+		Point* p = calculPointFromTab(points, nbU, nbV, u, v);
 		return p;
 	}); };
 

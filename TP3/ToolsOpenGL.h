@@ -173,11 +173,13 @@ Point*** getMatriceFromBezier(Point** tabCtrlU, int nbU, Point** tabCtrlV, int n
 		points[i] = new Point*[nbV];
 
 		Point* Pu = tabCtrlU[i];
+		Vector* ref = new Vector(tabCtrlV[0], Pu);
+
 		for (int j = 0; j < nbV; ++j) {
-			Point* Pv = tabCtrlV[j];
-			Vector* PUV = new Vector(Pu, Pv);
+			Vector* Pv = new Vector(*tabCtrlV[j]);
+			Pv->add(ref);
 			//PUV->add(Pu);
-			points[i][j] = new Point(*PUV);
+			points[i][j] = new Point(*Pv);
 			cout << "points[" << i << "][" << j << "] = " << *points[i][j] << endl;
 		}
 	}

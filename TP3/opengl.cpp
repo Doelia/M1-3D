@@ -291,7 +291,7 @@ void render_scene()
 
   glColor3f(0, 1.0, 1.0);
   drawPoints(pts5, nbrPoints*nbrPoints);
-  glColor3f(1.0, 0, 0);
+  glColor3f(0, 1.0, 0);
   drawMatrice(matrice, nbrU, nbrV);
   glColor3f(1.0, 0, 1.0);
   drawPoints(pU, 3);

@@ -56,6 +56,27 @@ std::function<Point*(double)> getDroite(Point* a, Point *b) {
 	return f;
 }
 
+Point*** getSurfaceCylindrique(std::function<Point*(double)> f, Vector* d, int nbU, int nbV) {
+	Point*** pts = new Point**[nbU];
+	for (int i = 0; i < nbU; ++i) {
+		pts[i] = new Point*[nbV];
+		double u = 1.0/(nbU-1) * (double) i;
+		Point* p = f(u);
+		for (int j = 0; j < nbV; j++) {
+			double v = 1.0/(nbV-1) * (double) j;
+			Vector* n = new Vector(*p);
+			Vector* direct = new Vector(*d);
+			direct->diviseNorme(v);
+			n->add(direct);
+			pts[i][j] = new Point(*n);
+			//if (v == 1) {
+				cout << *p << " devient " << *pts[i][j] << endl;
+			//}
+		}
+	}
+	return pts;
+}
+
 Point** discretiser(std::function<Point*(double)> f, int nbU) {
 	Point** pts = new Point*[nbU];
 	for (int i = 0; i < nbU; ++i) {

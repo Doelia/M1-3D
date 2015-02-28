@@ -36,6 +36,9 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 #define KEY_ESC 27
 
 
+Vector* directionPlan = new Vector(0,1,0);
+Point* centerPlan = new Point(0,0,0);
+
 // Entêtes de fonctions
 void init_scene();
 void render_scene();
@@ -44,47 +47,93 @@ GLvoid window_display();
 GLvoid window_reshape(GLsizei width, GLsizei height); 
 GLvoid window_key(unsigned char key, int x, int y); 
 
+
+// the key states. These variables will be zero
+//when no key is being presses
+float deltaAngleX = 0.0f;
+float deltaAngleY = 0.0f;
+float deltaMove = 0;
+int xOrigin = -1;
+int yOrigin = -1;
+float angleX = 0.0f;
+float angleY = 0.0f;
+
+void mouseMove(int x, int y) { 	
+ 
+    if (xOrigin >= 0) {
+ 
+		deltaAngleX = (x - xOrigin) * 0.001f;
+		deltaAngleY = (y - yOrigin) * 0.001f;
+ 
+		float lx = sin(angleX + deltaAngleX);
+		float ly = sin(angleY + deltaAngleY);
+		float lz = -cos(angleX + deltaAngleX);
+
+		directionPlan = new Vector(lx, ly, lz);
+
+		render_scene();
+	}
+}
+ 
+void mouseButton(int button, int state, int x, int y) {
+ 
+	// only start motion if the left button is pressed
+	if (button == GLUT_LEFT_BUTTON) {
+ 
+		// when the button is released
+		if (state == GLUT_UP) {
+			angleX += deltaAngleX;
+			angleY += deltaAngleY;
+			xOrigin = -1;
+			yOrigin = -1;
+		}
+		else  {// state = GLUT_DOWN
+			xOrigin = x;
+			yOrigin = y;
+		}
+	}
+}
+
+
 int main(int argc, char **argv) 
 {  
-  // initialisation  des paramètres de GLUT en fonction
-  // des arguments sur la ligne de commande
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA);
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGBA);
+	glutInitWindowPosition(0, 0);
+	glutInitWindowSize(WIDTH, HEIGHT);
+	glutCreateWindow("Premier exemple : carré");
 
-  // définition et création de la fenêtre graphique, ainsi que son titre
-  glutInitWindowSize(WIDTH, HEIGHT);
-  glutInitWindowPosition(0, 0);
-  glutCreateWindow("Premier exemple : carré");
+	initGL();  
+	init_scene();
 
-  // initialisation de OpenGL et de la scène
-  initGL();  
-  init_scene();
+	glutDisplayFunc(&window_display);
+	glutReshapeFunc(&window_reshape);
 
-  // choix des procédures de callback pour 
-  // le tracé graphique
-  glutDisplayFunc(&window_display);
-  // le redimensionnement de la fenêtre
-  glutReshapeFunc(&window_reshape);
-  // la gestion des événements clavier
-  glutKeyboardFunc(&window_key);
+	glutIgnoreKeyRepeat(1);
+	glutKeyboardFunc(&window_key);
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+
+
+	glEnable(GL_DEPTH_TEST);
 
   // la boucle prinicipale de gestion des événements utilisateur
-  glutMainLoop();  
+	glutMainLoop();  
 
-  return 1;
+	return 1;
 }
 
 // initialisation du fond de la fenêtre graphique : noir opaque
 GLvoid initGL() 
 {
-  glClearColor(RED, GREEN, BLUE, ALPHA);        
+	glClearColor(RED, GREEN, BLUE, ALPHA);        
 }
 
 // Initialisation de la scene. Peut servir à stocker des variables de votre programme
 // à initialiser
 void init_scene()
 {
- glPointSize(3);
+	glPointSize(3);
 
 
 }
@@ -93,43 +142,43 @@ void init_scene()
 
 GLvoid window_display()
 {
-  glClear(GL_COLOR_BUFFER_BIT);
-  glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
 
   // C'est l'endroit où l'on peut dessiner. On peut aussi faire appel
   // à une fonction (render_scene() ici) qui contient les informations 
   // que l'on veut dessiner
-  render_scene();
+	render_scene();
 
   // trace la scène grapnique qui vient juste d'être définie
-  glFlush();
+	glFlush();
 }
 
 // fonction de call-back pour le redimensionnement de la fenêtre
 
 GLvoid window_reshape(GLsizei width, GLsizei height)
 {  
-  glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
   // ici, vous verrez pendant le cours sur les projections qu'en modifiant les valeurs, il est
   // possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
   // de trop grosse taille par rapport à la fenêtre.
-  int size = 5;
-  glOrtho(0, size, 0, size, -2, 2);
+	int size = 11;
+	glOrtho(-size, size, -size, size, -size*2, size*2);
   //glOrtho(0, size, 0, size, 0, size);
 
   // toutes les transformations suivantes s´appliquent au modèle de vue 
-  glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 }
 
 GLvoid window_key(unsigned char key, int x, int y) 
 {  
-  switch (key) {    
-    case KEY_ESC:  
-    exit(1);                    
-    break; 
+	switch (key) {    
+		case KEY_ESC:  
+		exit(1);                    
+		break; 
 
   case 97: // a
   case 122: // z
@@ -153,20 +202,29 @@ GLvoid window_key(unsigned char key, int x, int y)
 render_scene();
 }
 
+void projectAll(Point** pts, int nb) {
+	for (int i = 0; i < nb; ++i) {
+		pts[i] = pts[i]->projectOnPlan(centerPlan, directionPlan);
+	}
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Fonction que vous allez modifier afin de dessiner
 /////////////////////////////////////////////////////////////////////////////////////////
 void render_scene()
 {
+	glClear(GL_COLOR_BUFFER_BIT);
 
-  cout << "========================================================" << endl;
+	cout << "==================  RENDER  =======================" << endl;
 
-  int nbrPoints = 3;
+	Point** pts = generateCylindre(10,20,10);
 
-  glClear(GL_COLOR_BUFFER_BIT);
+	projectAll(pts, 10*2);
 
+	glColor3f(1.0, 0, 1.0);
+	drawCurve(pts, 10*2);
 
-  glFlush();
+	glFlush();
 
 }
 

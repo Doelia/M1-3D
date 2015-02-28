@@ -4,9 +4,6 @@
 #include <stdio.h>      
 #include <stdlib.h>     
 #include <math.h>
-#include "Vector.h"
-#include "Point.h"
-#include "../GlutIncluder.h"
 #include <functional>
 
 void drawPoint(Coord* c) {

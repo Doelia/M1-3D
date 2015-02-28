@@ -12,9 +12,9 @@
 #include <stdio.h>      
 #include <stdlib.h>     
 #include <math.h>
-#include "Vector.h"
-#include "Point.h"
+#include "../lib/Include.h"
 #include "ToolsOpenGL.h"
+
 
 
 /* Dans les salles de TP, vous avez généralement accès aux glut dans C:\Dev. Si ce n'est pas le cas, téléchargez les .h .lib ...
@@ -22,7 +22,6 @@ Vous pouvez ensuite y faire référence en spécifiant le chemin dans visual. Vo
 Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h" 
 */
 
-#include "../GlutIncluder.h"
 
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -212,7 +211,7 @@ void render_scene()
 
   //Point** pts2 = discretiser(f1,10);
 
-  /*
+  //*
   Point** pts2 = surface(f1,f3, 70, 30);
   glColor3f(0, 1.0, 1.0);
   drawPoints(pts2, 70*30);
@@ -225,7 +224,7 @@ void render_scene()
   drawCurve(pts4, nbr);
   //*/
 
-  //*
+  /*
   std::function<Point*(double, double)> f4 = surfaceByCasteljau(pU, 3, pV, 3);
    Point** pts5 = discretiserDouble(f4,nbrPoints,nbrPoints);
   glColor3f(0, 1.0, 1.0);

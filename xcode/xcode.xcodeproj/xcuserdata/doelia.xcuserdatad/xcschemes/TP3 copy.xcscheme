@@ -48,10 +48,7 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       allowLocationSimulation = "YES">
-      <PathRunnable
-         FilePath = "/Users/doelia/Library/Developer/Xcode/DerivedData/xcode-ddpbgfaqdwrfnidcswzudlztczhf/Build/Products/Debug/TP4">
-      </PathRunnable>
-      <MacroExpansion>
+      <BuildableProductRunnable>
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "D72F8B0E1AA2035200386CE2"
@@ -59,7 +56,7 @@
             BlueprintName = "TP4"
             ReferencedContainer = "container:xcode.xcodeproj">
          </BuildableReference>
-      </MacroExpansion>
+      </BuildableProductRunnable>
       <AdditionalOptions>
       </AdditionalOptions>
    </LaunchAction>

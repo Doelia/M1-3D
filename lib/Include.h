@@ -36,6 +36,23 @@ void drawMatrice(Point*** tab, int u, int v) {
 	glEnd();
 }
 
+void drawFace(Point** tab, int x) {
+	glBegin(GL_POLYGON);
+	for (int i = 0; i < x; ++i) {
+		drawPoint(tab[i]);
+		cout << "point " << *tab[i] << endl;
+	}
+	glEnd();
+}
+
+void drawCylindre(Point*** tab, int nbrMeridiens) {
+	for (int i = 0; i < nbrMeridiens+2; i++) {
+		cout << "Face " << i << endl;
+		Point** face = tab[i];
+		drawFace(face, (i <= 1) ? nbrMeridiens : 4);
+	}
+}
+
 Point** copyPoints(Point** tab, int n) {
 	Point** out = new Point*[n];
 	for (int i = 0; i < n; ++i) {
@@ -43,5 +60,7 @@ Point** copyPoints(Point** tab, int n) {
 	}
 	return out;
 }
+
+
 
 #endif

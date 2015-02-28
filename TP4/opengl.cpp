@@ -36,7 +36,7 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 #define KEY_ESC 27
 
 
-Vector* directionPlan = new Vector(0,1,0);
+Vector* directionPlan = new Vector(0,0,1);
 Point* centerPlan = new Point(0,0,0);
 
 // Entêtes de fonctions
@@ -50,20 +50,24 @@ GLvoid window_key(unsigned char key, int x, int y);
 
 float deltaAngleX = 0.0f;
 float deltaAngleY = 0.0f;
-float deltaMove = 0;
 int xOrigin = -1;
 int yOrigin = -1;
-float angleX = 0.0f;
-float angleY = 0.0f;
 
 void mouseMove(int x, int y) { 	
     if (xOrigin >= 0) {
 		deltaAngleX = (x - xOrigin) * 0.001f;
 		deltaAngleY = (y - yOrigin) * 0.001f;
-		float lx = sin(angleX + deltaAngleX);
-		float ly = sin(angleY + deltaAngleY);
-		float lz = -cos(angleX + deltaAngleX);
-		directionPlan = new Vector(lx, ly, lz);
+		cout << "ddeltaAngleX = " << deltaAngleX << endl;
+		cout << "ddeltaAngleY = " << deltaAngleY << endl;
+		
+		float sinX = sin(deltaAngleX);
+		float sinY = sin(deltaAngleY);
+		float cosX = cos(deltaAngleX);
+		float cosY = cos(deltaAngleY);
+
+		directionPlan = new Vector(sinX*cosY, sinX*sinY, cosX);
+		directionPlan->normalize();
+		cout << "directionPlan = " << *directionPlan << endl;
 		render_scene();
 	}
 }
@@ -71,8 +75,6 @@ void mouseMove(int x, int y) {
 void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON) {
 		if (state == GLUT_UP) {
-			angleX += deltaAngleX;
-			angleY += deltaAngleY;
 			xOrigin = -1;
 			yOrigin = -1;
 		}
@@ -192,8 +194,9 @@ render_scene();
 
 void projectAll(Point** pts, int nb) {
 	for (int i = 0; i < nb; ++i) {
-		pts[i]->projectOnPlan(centerPlan, directionPlan);
+		pts[i] = pts[i]->projectOnPlan(centerPlan, directionPlan);
 	}
+	
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
@@ -205,12 +208,13 @@ void render_scene()
 
 	cout << "==================  RENDER  =======================" << endl;
 
-	Point** pts = generateCylindre(10,20,10);
+	Point*** pts = generateCylindre(10,20,10);
 
-	projectAll(pts, 10*2);
+	projectAll(pts[0], 10);
+	projectAll(pts[1], 10);
 
-	glColor3f(1.0, 0, 1.0);
-	drawCurve(pts, 10*2);
+	glColor4f(1.0, 0, 1.0, 0.5f);
+	drawCylindre(pts, 10);
 
 	glFlush();
 

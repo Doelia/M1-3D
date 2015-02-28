@@ -86,7 +86,7 @@ Point** getPos(Point** tab, int nbrPoints, double u) {
 	} else {
 		Point** pts = new Point*[nbrPoints-1];
 		for (int i = 0; i < nbrPoints-1; ++i) {
-			pts[i] = o(tab[i], tab[i+1], u);
+			pts[i] = getPt(tab[i], tab[i+1], u);
 		}
 		return getPos(pts, nbrPoints-1, u);
 	}

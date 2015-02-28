@@ -5,6 +5,8 @@
 #include "Point.h"
 #include "GlutIncluder.h"
 #include "math.h"
+#include <unistd.h>
+#include <pthread.h>
 
 void drawPoint(Coord* c) {
 	glVertex3f(c->getX(), c->getY(), c->getZ());
@@ -40,17 +42,33 @@ void drawFace(Point** tab, int x) {
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < x; ++i) {
 		drawPoint(tab[i]);
-		cout << "point " << *tab[i] << endl;
+		//	cout << "point " << *tab[i] << endl;
 	}
 	glEnd();
 }
 
 void drawCylindre(Point*** tab, int nbrMeridiens) {
-	for (int i = 0; i < nbrMeridiens+2; i++) {
-		cout << "Face " << i << endl;
+	for (int i = 2; i < 2+nbrMeridiens; i++) {
 		Point** face = tab[i];
-		drawFace(face, (i <= 1) ? nbrMeridiens : 4);
+		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
+		drawFace(face, 4);
 	}
+	for (int i = 0; i < 2; i++) {
+		Point** face = tab[i];
+		glColor4f(.5f, 1, 1, 0.5f);
+		drawFace(face, nbrMeridiens);
+	}
+}
+
+void drawCone(Point*** tab, int nbrMeridiens) {
+	for (int i = 1; i < 1+nbrMeridiens; i++) {
+		cout << "face " << i << endl;
+		Point** face = tab[i];
+		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
+		drawFace(face, 4);
+	}
+	glColor4f(.5f, 1, 1, 0.5f);
+	drawFace(tab[0], nbrMeridiens);
 }
 
 Point** copyPoints(Point** tab, int n) {

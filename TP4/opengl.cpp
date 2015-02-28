@@ -47,6 +47,17 @@ GLvoid window_display();
 GLvoid window_reshape(GLsizei width, GLsizei height); 
 GLvoid window_key(unsigned char key, int x, int y); 
 
+void *thread_1(void *arg) {
+	//render_scene();
+    usleep(100*1000);
+    thread_1(NULL);
+}
+
+void start_thread() {
+	cout << "start_thread" << endl;
+	pthread_t thread1;
+    pthread_create(&thread1, NULL, thread_1, NULL);
+}
 
 float deltaAngleX = 0.0f;
 float deltaAngleY = 0.0f;
@@ -69,7 +80,8 @@ void mouseMove(int x, int y) {
 		render_scene();
 	}
 }
- 
+
+
 void mouseButton(int button, int state, int x, int y) {
 	if (button == GLUT_LEFT_BUTTON) {
 		if (state == GLUT_UP) {
@@ -103,7 +115,7 @@ int main(int argc, char **argv)
 	glutMotionFunc(mouseMove);
 
 
-	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_BLEND);
 
   // la boucle prinicipale de gestion des événements utilisateur
 	glutMainLoop();  
@@ -114,7 +126,8 @@ int main(int argc, char **argv)
 // initialisation du fond de la fenêtre graphique : noir opaque
 GLvoid initGL() 
 {
-	glClearColor(RED, GREEN, BLUE, ALPHA);        
+	glClearColor(RED, GREEN, BLUE, ALPHA);   
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);     
 }
 
 // Initialisation de la scene. Peut servir à stocker des variables de votre programme
@@ -122,6 +135,7 @@ GLvoid initGL()
 void init_scene()
 {
 	glPointSize(3);
+	start_thread();
 }
 
 
@@ -204,16 +218,28 @@ void render_scene()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
 
+
 	cout << "==================  RENDER  =======================" << endl;
 
-	Point*** pts = generateCylindre(10,20,10);
+	int m = 3;
+	Point*** pts = generateCylindre(5,15,m);
+	Point*** cone = generateCone(3,new Point(2,2,0),5,m);
+	cout << "generate ok" << endl;
 
-	projectAll(pts[0], 10);
-	projectAll(pts[1], 10);
+	/*
+	projectAll(pts[0], m);
+	projectAll(pts[1], m);
 
-	glColor4f(1.0, 0, 1.0, 0.5f);
-	drawCylindre(pts, 10);
+	for (int i = 2; i < m+2; i++) {
+		projectAll(pts[i], 4);
+	}
+	*/
 
+	glColor4f(0, 1.0f, 0, 0.5f);
+	drawCylindre(pts, m);
+	drawCone(cone, m);
+
+	glRotatef(3, 1.0f, 0.5f, 0.1f);
 	glFlush();
 
 }

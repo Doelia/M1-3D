@@ -188,8 +188,8 @@ void render_scene()
   drawCurve(ptsHermite, 10);
 
   // BEZIER
-  //Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
-  Point** pts2 = bezierCurveByCasteljau(pts3, nbr, 10);
+  Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
+  //Point** pts2 = bezierCurveByCasteljau(pts3, nbr, 10);
   
   glColor3f(0, 1.0, 1.0);
   drawCurve(pts2, 10);

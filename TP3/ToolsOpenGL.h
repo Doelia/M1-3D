@@ -127,7 +127,7 @@ Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double
 
 Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double u, double v) {
 
-	cout << *ij << ", " << *i_j << ", " << *ij_ << ", " << *i_j_ << endl;
+	//cout << *ij << ", " << *i_j << ", " << *ij_ << ", " << *i_j_ << endl;
 	//cout << "u=" << u << ", v=" << v << endl;
 	
 	Vector* A = new Vector(ij_, i_j_);
@@ -150,7 +150,7 @@ Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double
 }
 
 Point* calculPointFromTab(Point*** points, int nbU, int nbV, double u, double v) {
-	cout << "calculPointFromTab(" << nbU << ", " << nbV << "), u=" << u << ", v=" << v << endl;
+	//cout << "calculPointFromTab(" << nbU << ", " << nbV << "), u=" << u << ", v=" << v << endl;
 	if (nbU == 1 || nbV == 1) {
 		return points[0][0]; // TODO
 	} else {
@@ -160,7 +160,7 @@ Point* calculPointFromTab(Point*** points, int nbU, int nbV, double u, double v)
 			for (int j = 0; j < nbV-1; ++j) {
 				nouv[i][j] = new Point();
 				nouv[i][j] = getPointOnCarreau(points[i][j], points[i+1][j], points[i][j+1], points[i+1][j+1], u , v);
-				cout << "nouv[" << i << "," << j << "] = " << *nouv[i][j] << endl;
+				//cout << "nouv[" << i << "," << j << "] = " << *nouv[i][j] << endl;
 			}
 		}
 		return calculPointFromTab(nouv, nbU-1, nbV-1, u, v);
@@ -180,7 +180,7 @@ Point*** getMatriceFromBezier(Point** tabCtrlU, int nbU, Point** tabCtrlV, int n
 			Pv->add(ref);
 			//PUV->add(Pu);
 			points[i][j] = new Point(*Pv);
-			cout << "points[" << i << "][" << j << "] = " << *points[i][j] << endl;
+			//cout << "points[" << i << "][" << j << "] = " << *points[i][j] << endl;
 		}
 	}
 

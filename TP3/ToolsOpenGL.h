@@ -69,9 +69,6 @@ Point*** getSurfaceCylindrique(std::function<Point*(double)> f, Vector* d, int n
 			direct->diviseNorme(v);
 			n->add(direct);
 			pts[i][j] = new Point(*n);
-			//if (v == 1) {
-				cout << *p << " devient " << *pts[i][j] << endl;
-			//}
 		}
 	}
 	return pts;

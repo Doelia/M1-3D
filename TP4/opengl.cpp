@@ -57,8 +57,6 @@ void mouseMove(int x, int y) {
     if (xOrigin >= 0) {
 		deltaAngleX = (x - xOrigin) * 0.001f;
 		deltaAngleY = (y - yOrigin) * 0.001f;
-		cout << "ddeltaAngleX = " << deltaAngleX << endl;
-		cout << "ddeltaAngleY = " << deltaAngleY << endl;
 		
 		float sinX = sin(deltaAngleX);
 		float sinY = sin(deltaAngleY);
@@ -67,7 +65,7 @@ void mouseMove(int x, int y) {
 
 		directionPlan = new Vector(sinX*cosY, sinX*sinY, cosX);
 		directionPlan->normalize();
-		cout << "directionPlan = " << *directionPlan << endl;
+		//cout << "directionPlan = " << *directionPlan << endl;
 		render_scene();
 	}
 }
@@ -124,9 +122,9 @@ GLvoid initGL()
 void init_scene()
 {
 	glPointSize(3);
-
-
 }
+
+
 
 // fonction de call-back pour l´affichage dans la fenêtre
 

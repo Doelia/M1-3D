@@ -26,6 +26,16 @@ void drawPoints(Point** tab, long nbPoints) {
 	glEnd();
 }
 
+void drawMatrice(Point*** tab, int u, int v) {
+	glBegin(GL_POINTS);
+	for (int i = 0; i < u; ++i) {
+		for (int j = 0; j < v; ++j) {
+			drawPoint(tab[i][j]);
+		}
+	}
+	glEnd();
+}
+
 Point** copyPoints(Point** tab, int n) {
 	Point** out = new Point*[n];
 	for (int i = 0; i < n; ++i) {

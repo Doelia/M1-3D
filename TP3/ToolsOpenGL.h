@@ -149,19 +149,6 @@ Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double
 	return new Point(*AB);
 }
 
-Point* getPointOnCoord(int x, int y, Point** tabCtrlU, Point** tabCtrlV) {
-	int xMin = (x == 0)?0:x-1;
-	int yMin = (y == 0)?0:y-1;
-	Vector* X = new Vector(tabCtrlU[xMin], tabCtrlU[x]);
-	cout << "X = " << *X << endl;
-	Vector* Y = new Vector(tabCtrlV[yMin], tabCtrlV[y]);
-	cout << "Y = " << *Y << endl;
-	X->add(Y);
-	cout << "tabCtrlU[xMin] = " << *tabCtrlU[xMin] << endl;
-	X->add(tabCtrlV[yMin]);
-	return new Point(*X);
-}
-
 Point* calculPointFromTab(Point*** points, int nbU, int nbV, double u, double v) {
 	cout << "calculPointFromTab(" << nbU << ", " << nbV << "), u=" << u << ", v=" << v << endl;
 	if (nbU == 1 || nbV == 1) {
@@ -172,7 +159,7 @@ Point* calculPointFromTab(Point*** points, int nbU, int nbV, double u, double v)
 			nouv[i] = new Point*[nbV-1];
 			for (int j = 0; j < nbV-1; ++j) {
 				nouv[i][j] = new Point();
-				nouv[i][j] = getPointOnCarreau(points[i][j], points[i+1][j], points[i][j+1], points[j+1][i+1], u , v);
+				nouv[i][j] = getPointOnCarreau(points[i][j], points[i+1][j], points[i][j+1], points[i+1][j+1], u , v);
 				cout << "nouv[" << i << "," << j << "] = " << *nouv[i][j] << endl;
 			}
 		}
@@ -180,8 +167,27 @@ Point* calculPointFromTab(Point*** points, int nbU, int nbV, double u, double v)
 	}
 }
 
+Point*** getMatriceFromBezier(Point** tabCtrlU, int nbU, Point** tabCtrlV, int nbV) {
+	Point*** points = new Point**[nbU];
+	for (int i = 0; i < nbU; ++i) {
+		points[i] = new Point*[nbV];
 
-std::function<Point*(double, double)>  surfaceByCasteljau(
+		Point* Pu = tabCtrlU[i];
+		for (int j = 0; j < nbV; ++j) {
+			Point* Pv = tabCtrlV[j];
+			Vector* PUV = new Vector(Pu, Pv);
+			//PUV->add(Pu);
+			points[i][j] = new Point(*PUV);
+			cout << "points[" << i << "][" << j << "] = " << *points[i][j] << endl;
+		}
+	}
+
+	return points;
+
+}
+
+
+std::function<Point*(double, double)> surfaceByCasteljau(
 	Point** tabCtrlU, int nbU,
 	Point** tabCtrlV, int nbV
 	) {
@@ -189,15 +195,7 @@ std::function<Point*(double, double)>  surfaceByCasteljau(
 	auto curbeB = [] (Point** tabCtrlU, int nbU, Point** tabCtrlV, int nbV) -> std::function<Point*(double, double)>
 	{ return ([=] (double u, double v) {
 
-		Point*** points = new Point**[nbU];
-
-		for (int i = 0; i < nbU; ++i) {
-			points[i] = new Point*[nbV];
-			for (int j = 0; j < nbV; ++j) {
-				points[i][j] = getPointOnCoord(i, j, tabCtrlU, tabCtrlV);
-				cout << "points[" << i << "][" << j << "] = " << *points[i][j] << endl;
-			}
-		}
+		Point*** points = getMatriceFromBezier(tabCtrlU, nbU, tabCtrlV, nbV);
 
 		Point* p = calculPointFromTab(points, nbU, nbV, u, v);
 		return p;

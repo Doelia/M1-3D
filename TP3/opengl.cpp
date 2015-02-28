@@ -180,8 +180,8 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
   // ici, vous verrez pendant le cours sur les projections qu'en modifiant les valeurs, il est
   // possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
   // de trop grosse taille par rapport à la fenêtre.
-  int size = 5;
-  glOrtho(-0, size, -0, size, -1000, 1000);
+  int size = 10;
+  glOrtho(-size, size, -size, size, -1000, 1000);
   //glOrtho(0, size, 0, size, 0, size);
 
   // toutes les transformations suivantes s´appliquent au modèle de vue 
@@ -241,7 +241,7 @@ void render_scene()
 
   cout << "========================================================" << endl;
 
-  int nbrPoints = 3;
+  int nbrPoints = 10;
 
   glClear(GL_COLOR_BUFFER_BIT);
 
@@ -251,40 +251,51 @@ void render_scene()
   std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
 
   //Point** pts2 = discretiser(f1,10);
-
-  /*
   Point** pts2 = surface(f1,f3, 70, 30);
+
   Point** pt3_c = copyPoints(pts3, nbr);
   Point** pt4_c = copyPoints(pts4, nbr);
 
-  projectAll(pts2, 70*30);
   projectAll(pt3_c, nbr);
   projectAll(pt4_c, nbr);
-
-  glColor3f(0, 1.0, 1.0);
-  drawPoints(pts2, 70*30);
-  glColor3f(1.0, 0, 0);
+   glColor3f(1.0, 0, 0);
   drawCurve(pt3_c, nbr);
   glColor3f(1.0, 1.0, 0);
   drawCurve(pt4_c, nbr);
+
+  /*
+  projectAll(pts2, 70*30);
+  glColor3f(0, 1.0, 1.0);
+  drawPoints(pts2, 70*30);
   //*/
 
   //*
+
+  int nbrU = nbr;
+  int nbrV = nbr;
+
   Point** pU = new Point*[3];
   Point** pV = new Point*[3];
   pU[0] = new Point(1,1,0);
   pU[1] = new Point(2,1,0);
   pU[2] = new Point(3,1,0);
-  pV[0] = new Point(1,1,0);
-  pV[1] = new Point(1,2,0);
-  pV[2] = new Point(1,3,0);
-  std::function<Point*(double, double)> f4 = surfaceByCasteljau(pU, 3, pV, 3);
-   Point** pts5 = discretiserDouble(f4,nbrPoints,nbrPoints);
+  pV[0] = new Point(1,4,0);
+  pV[1] = new Point(1,5,0);
+  pV[2] = new Point(1,6,0);
+
+  std::function<Point*(double, double)> f4 = surfaceByCasteljau(pts3, nbrU, pts4, nbrV);
+  Point*** matrice = getMatriceFromBezier(pts3, nbrU, pts4, nbrV);
+
+  Point** pts5 = discretiserDouble(f4,nbrPoints,nbrPoints);
+  projectAll(pts5, nbrPoints*nbrPoints);
 
   glColor3f(0, 1.0, 1.0);
   drawPoints(pts5, nbrPoints*nbrPoints);
   glColor3f(1.0, 0, 0);
+  drawMatrice(matrice, nbrU, nbrV);
+  glColor3f(1.0, 0, 1.0);
   drawPoints(pU, 3);
+  glColor3f(1.0, 1.0, 0.5);
   drawPoints(pV, 3);
   glColor3f(1.0, 1.0, 0);
 

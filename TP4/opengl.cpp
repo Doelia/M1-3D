@@ -38,6 +38,7 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 
 Vector* directionPlan = new Vector(0,0,1);
 Point* centerPlan = new Point(0,0,0);
+int m = 3; // Méridiens
 
 // Entêtes de fonctions
 void init_scene();
@@ -182,6 +183,8 @@ GLvoid window_key(unsigned char key, int x, int y)
 		exit(1);                    
 		break; 
 
+		case 43: m++; break; // +
+		case 45: m--; break; // -
   case 97: // a
   case 122: // z
   case 101: // e
@@ -211,6 +214,7 @@ void projectAll(Point** pts, int nb) {
 	
 }
 
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Fonction que vous allez modifier afin de dessiner
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -221,7 +225,6 @@ void render_scene()
 
 	cout << "==================  RENDER  =======================" << endl;
 
-	int m = 3;
 	Point*** pts = generateCylindre(5,15,m);
 	Point*** cone = generateCone(3,new Point(2,2,0),5,m);
 	cout << "generate ok" << endl;

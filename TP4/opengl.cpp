@@ -48,8 +48,6 @@ GLvoid window_reshape(GLsizei width, GLsizei height);
 GLvoid window_key(unsigned char key, int x, int y); 
 
 
-// the key states. These variables will be zero
-//when no key is being presses
 float deltaAngleX = 0.0f;
 float deltaAngleY = 0.0f;
 float deltaMove = 0;
@@ -59,41 +57,31 @@ float angleX = 0.0f;
 float angleY = 0.0f;
 
 void mouseMove(int x, int y) { 	
- 
     if (xOrigin >= 0) {
- 
 		deltaAngleX = (x - xOrigin) * 0.001f;
 		deltaAngleY = (y - yOrigin) * 0.001f;
- 
 		float lx = sin(angleX + deltaAngleX);
 		float ly = sin(angleY + deltaAngleY);
 		float lz = -cos(angleX + deltaAngleX);
-
 		directionPlan = new Vector(lx, ly, lz);
-
 		render_scene();
 	}
 }
  
 void mouseButton(int button, int state, int x, int y) {
- 
-	// only start motion if the left button is pressed
 	if (button == GLUT_LEFT_BUTTON) {
- 
-		// when the button is released
 		if (state == GLUT_UP) {
 			angleX += deltaAngleX;
 			angleY += deltaAngleY;
 			xOrigin = -1;
 			yOrigin = -1;
 		}
-		else  {// state = GLUT_DOWN
+		else  {
 			xOrigin = x;
 			yOrigin = y;
 		}
 	}
 }
-
 
 int main(int argc, char **argv) 
 {  
@@ -204,7 +192,7 @@ render_scene();
 
 void projectAll(Point** pts, int nb) {
 	for (int i = 0; i < nb; ++i) {
-		pts[i] = pts[i]->projectOnPlan(centerPlan, directionPlan);
+		pts[i]->projectOnPlan(centerPlan, directionPlan);
 	}
 }
 

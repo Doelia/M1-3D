@@ -46,11 +46,51 @@ GLvoid window_display();
 GLvoid window_reshape(GLsizei width, GLsizei height); 
 GLvoid window_key(unsigned char key, int x, int y); 
 
+
 Point** pts3;
 Point** pts4;
 Point*** inChange = &pts3;
 Point* modify;
 int nbr = 4;
+
+// CAMERA
+Vector* directionPlan = new Vector(0,0,1);
+Point* centerPlan = new Point(0,0,0);
+float deltaAngleX = 0.0f;
+float deltaAngleY = 0.0f;
+float deltaMove = 0;
+int xOrigin = -1;
+int yOrigin = -1;
+float angleX = 0.0f;
+float angleY = 0.0f;
+
+void mouseMove(int x, int y) {  
+    if (xOrigin >= 0) {
+    deltaAngleX = (x - xOrigin) * 0.001f;
+    deltaAngleY = (y - yOrigin) * 0.001f;
+    float lx = sin(angleX + deltaAngleX);
+    float ly = sin(angleY + deltaAngleY);
+    float lz = -cos(angleX + deltaAngleX);
+    directionPlan = new Vector(lx, ly, lz);
+    render_scene();
+  }
+}
+ 
+void mouseButton(int button, int state, int x, int y) {
+  if (button == GLUT_LEFT_BUTTON) {
+    if (state == GLUT_UP) {
+      angleX += deltaAngleX;
+      angleY += deltaAngleY;
+      xOrigin = -1;
+      yOrigin = -1;
+    }
+    else  {
+      xOrigin = x;
+      yOrigin = y;
+    }
+  }
+}
+
 
 int main(int argc, char **argv) 
 {  
@@ -75,6 +115,9 @@ int main(int argc, char **argv)
   glutReshapeFunc(&window_reshape);
   // la gestion des événements clavier
   glutKeyboardFunc(&window_key);
+
+  glutMouseFunc(mouseButton);
+  glutMotionFunc(mouseMove);
 
   // la boucle prinicipale de gestion des événements utilisateur
   glutMainLoop();  
@@ -138,7 +181,7 @@ GLvoid window_reshape(GLsizei width, GLsizei height)
   // possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
   // de trop grosse taille par rapport à la fenêtre.
   int size = 5;
-  glOrtho(0, size, 0, size, -2, 2);
+  glOrtho(-0, size, -0, size, -1000, 1000);
   //glOrtho(0, size, 0, size, 0, size);
 
   // toutes les transformations suivantes s´appliquent au modèle de vue 
@@ -184,6 +227,12 @@ GLvoid window_key(unsigned char key, int x, int y)
 render_scene();
 }
 
+void projectAll(Point** pts, int nb) {
+  for (int i = 0; i < nb; ++i) {
+    pts[i] = pts[i]->projectOnPlan(centerPlan, directionPlan);
+  }
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////
 // Fonction que vous allez modifier afin de dessiner
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -196,6 +245,31 @@ void render_scene()
 
   glClear(GL_COLOR_BUFFER_BIT);
 
+
+  std::function<Point*(double)> f1 = bezierCurveByBernstein(pts3, nbr);
+  std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
+  std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
+
+  //Point** pts2 = discretiser(f1,10);
+
+  /*
+  Point** pts2 = surface(f1,f3, 70, 30);
+  Point** pt3_c = copyPoints(pts3, nbr);
+  Point** pt4_c = copyPoints(pts4, nbr);
+
+  projectAll(pts2, 70*30);
+  projectAll(pt3_c, nbr);
+  projectAll(pt4_c, nbr);
+
+  glColor3f(0, 1.0, 1.0);
+  drawPoints(pts2, 70*30);
+  glColor3f(1.0, 0, 0);
+  drawCurve(pt3_c, nbr);
+  glColor3f(1.0, 1.0, 0);
+  drawCurve(pt4_c, nbr);
+  //*/
+
+  //*
   Point** pU = new Point*[3];
   Point** pV = new Point*[3];
   pU[0] = new Point(1,1,0);
@@ -204,29 +278,9 @@ void render_scene()
   pV[0] = new Point(1,1,0);
   pV[1] = new Point(1,2,0);
   pV[2] = new Point(1,3,0);
-
-  std::function<Point*(double)> f1 = bezierCurveByBernstein(pts3, nbr);
-  std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
-  std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
-
-  //Point** pts2 = discretiser(f1,10);
-
-  //*
-  Point** pts2 = surface(f1,f3, 70, 30);
-  glColor3f(0, 1.0, 1.0);
-  drawPoints(pts2, 70*30);
- // drawPoints(pts5, 10*10);
-  glColor3f(1.0, 0, 0);
- // drawPoints(pU, 2);
-  //drawPoints(pV, 2);
-  drawCurve(pts3, nbr);
-  glColor3f(1.0, 1.0, 0);
-  drawCurve(pts4, nbr);
-  //*/
-
-  /*
   std::function<Point*(double, double)> f4 = surfaceByCasteljau(pU, 3, pV, 3);
    Point** pts5 = discretiserDouble(f4,nbrPoints,nbrPoints);
+
   glColor3f(0, 1.0, 1.0);
   drawPoints(pts5, nbrPoints*nbrPoints);
   glColor3f(1.0, 0, 0);

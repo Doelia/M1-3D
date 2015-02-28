@@ -26,6 +26,12 @@ void drawPoints(Point** tab, long nbPoints) {
 	glEnd();
 }
 
-
+Point** copyPoints(Point** tab, int n) {
+	Point** out = new Point*[n];
+	for (int i = 0; i < n; ++i) {
+		out[i] = new Point(*tab[i]);
+	}
+	return out;
+}
 
 #endif

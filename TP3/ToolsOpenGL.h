@@ -49,6 +49,7 @@ std::function<Point*(double)> getDroite(Point* a, Point *b) {
 			a->getY() + v->getY(),
 			a->getZ() + v->getZ()
 		);
+		delete(v);
 		
 		return p;
 	}); };
@@ -68,6 +69,8 @@ Point*** getSurfaceCylindrique(std::function<Point*(double)> f, Vector* d, int n
 			Vector* direct = new Vector(*d);
 			direct->diviseNorme(v);
 			n->add(direct);
+			delete(n);
+			delete(direct);
 			pts[i][j] = new Point(*n);
 		}
 	}
@@ -164,7 +167,12 @@ Point* getPointOnCarreau(Point* ij, Point* i_j, Point* ij_, Point * i_j_, double
 	AB->add(A);
 	//cout << "P = " << *AB << endl;
 
-	return new Point(*AB);
+	delete(A);
+	delete(B);
+
+	Point* out = new Point(*AB);
+	delete(AB);
+	return out;
 }
 
 Point* calculPointFromTab(Point*** points, int nbU, int nbV, double u, double v) {
@@ -200,6 +208,8 @@ Point*** getMatriceFromBezier(Point** tabCtrlU, int nbU, Point** tabCtrlV, int n
 			points[i][j] = new Point(*Pv);
 			//cout << "points[" << i << "][" << j << "] = " << *points[i][j] << endl;
 		}
+
+		delete(ref);
 	}
 
 	return points;

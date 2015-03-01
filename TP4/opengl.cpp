@@ -184,7 +184,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 		break; 
 
 		case 43: m++; break; // +
-		case 45: m--; break; // -
+		case 45: m--; break; // --
   case 97: // a
   case 122: // z
   case 101: // e
@@ -211,7 +211,6 @@ void projectAll(Point** pts, int nb) {
 	for (int i = 0; i < nb; ++i) {
 		pts[i] = pts[i]->projectOnPlan(centerPlan, directionPlan);
 	}
-	
 }
 
 

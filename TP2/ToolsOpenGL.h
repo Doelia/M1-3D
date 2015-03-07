@@ -70,13 +70,18 @@ Point** bezierCurveByBernstein(Point** tab, long nControl, long nbU) {
 Point* getPt(Point* a, Point* b, double u) {
 	Vector* v = new Vector(a, b);
 	v->diviseNorme(u);
+
 	Point* out = new Point(	v->getX() + a->getX(),
 							v->getY() + a->getY(),
 							v->getZ() + a->getZ());
 
+<<<<<<< HEAD
 	cout << u << endl;
 	if (u == 0.3) {
 		cout << "hey" << endl;
+=======
+	if (u == .5) {
+>>>>>>> 0216cd5055ab7c2f1ab7fb9d95c55d1a871b9296
 		glBegin(GL_LINE_STRIP);
 			drawPoint(a);
 			drawPoint(b);

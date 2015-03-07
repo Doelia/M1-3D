@@ -184,8 +184,8 @@ void render_scene()
 
   // HERMITE
   glColor3f(0, 0, 1.0);
-  Point** ptsHermite = hermiteCurve(new Point(0,0,0), new Point(2,0,0), new Vector(1,1,0), new Vector(1,-1,0), 20);
-  drawCurve(ptsHermite, 10);
+  Point** ptsHermite = hermiteCurve(new Point(0,0,0), new Point(2,0,0), new Vector(1,1,0), new Vector(1,-1,0), 1);
+  drawCurve(ptsHermite, 1);
 
   // BEZIER
   //Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);

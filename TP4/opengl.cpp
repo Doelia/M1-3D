@@ -181,8 +181,8 @@ void render_scene()
 	cout << "==================  RENDER  =======================" << endl;
 
 	//exercice1();
-	exercice2();
-	//exercice3();
+	//exercice2();
+	exercice3();
 	
 	glRotatef(3, 1.0f, 0.5f, 0.1f);
 	glFlush();

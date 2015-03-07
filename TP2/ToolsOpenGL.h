@@ -107,6 +107,6 @@ Point** bezierCurveByCasteljau(Point** tab, long nControl, long nbU) {
 
 	return pts;
 }
-
+ 
 
 #endif

@@ -17,7 +17,6 @@ public:
 	void normalize();
 	void diviseNorme(double diviser);
 	double getScalar(Vector*);
-	void add(Coord*);
 	Vector* getProduitVectoriel(Vector*);
 
 };

@@ -39,6 +39,14 @@ double Coord::getZ() {
 	return z;
 }
 
+
+void Coord::add(Coord* v) {
+	this->x += v->getX();
+	this->y += v->getY();
+	this->z += v->getZ();
+}
+
+
 Coord::Coord(Coord& v) {
 	x = v.x;
 	y = v.y;

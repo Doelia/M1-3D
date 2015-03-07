@@ -40,12 +40,6 @@ Vector* Vector::getProduitVectoriel(Vector* v) {
 	);
 }
 
-void Vector::add(Coord* v) {
-	this->x += v->getX();
-	this->y += v->getY();
-	this->z += v->getZ();
-}
-
 double Vector::getAngle(Vector* v) {
 	return acos(
 		this->getScalar(v)/

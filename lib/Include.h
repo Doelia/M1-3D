@@ -5,6 +5,7 @@
 #include "Point.h"
 #include "GlutIncluder.h"
 #include "math.h"
+#include "Geometry.h"
 #include <unistd.h>
 #include <pthread.h>
 
@@ -42,7 +43,6 @@ void drawFace(Point** tab, int x) {
 	glBegin(GL_POLYGON);
 	for (int i = 0; i < x; ++i) {
 		drawPoint(tab[i]);
-		//	cout << "point " << *tab[i] << endl;
 	}
 	glEnd();
 }

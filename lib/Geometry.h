@@ -77,18 +77,8 @@ Point*** generateCone(int r, Point* sommet, int h, int m) {
 
 
 float getRayon(float r, float u) {
-	if (u < .5) {
-		u *= 2;
-		u = 1-u;
-	}
-	else {
-		u *= 2;
-		u -= 1;
-		u *= -1;
-	}
-
-	float angle = acos(u);
-	return sin(angle) * r;
+	u = (u < .5) ? 1-(u*2) : -((u*2)-1);
+	return sin(acos(u)) * r;
 }
 
 Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {

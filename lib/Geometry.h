@@ -2,7 +2,7 @@
 #define GEOMETRY_H
 
 #include "Point.h"
-#include "Math.h"
+#include "math.h"
 #include "Include.h"
 
 // Généré à partir de O en (0,0,0)
@@ -78,7 +78,21 @@ Point*** generateCone(int r, Point* sommet, int h, int m) {
 
 
 float getRayon(float r, float u) {
-	return r * sin(u*M_PI);
+	float save = u;
+	if (u < .5) {
+		u *= 2;
+		u = 1-u;
+	}
+	else {
+		u *= 2;
+		u -= 1;
+		u *= -1;
+	}
+
+	cout << save << " > " << u << endl;;
+
+	float angle = acos(u);
+	return sin(angle) * r;
 }
 
 Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
@@ -88,12 +102,15 @@ Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
 	}
 
 	Point poleNord(*center);
-	poleNord.setY(poleNord.getY()+r/2);
+	poleNord.setY(poleNord.getY()-r/2);
 
 	for (int i = 0; i < paralleles; ++i) {
 		double u = 1.0/(paralleles-1) * (double) i;
 		float rayon  = getRayon(r, u);
-		Vector d(0, poleNord.getX() + r*u*2, 0);
+		Vector d(0, poleNord.getY() + r*u*2, 0);
+		cout << "d = " << d << endl;
+		cout << "rayon = " << rayon << endl;
+		cout << "u = " << u << endl;
 
 		for (int j = 0; j < meridiens; ++j) {
 			double angle = 2.0f * M_PI * (double) j / (double) meridiens;
@@ -103,15 +120,15 @@ Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
 			int iPrec = i - 1;
 			int jPrec =(j == 0) ? meridiens-1 : j-1;
 
-			cout << "Traitement " << i << ", " << j << endl;
+			//cout << "Traitement " << i << ", " << j << endl;
 
 			int faceCourante = i*paralleles + j;
 			int facePrecedente = i*paralleles  + jPrec;
 			int faceDessus = iPrec*paralleles + j;
 			int faceDessusPrecedente = iPrec*paralleles + jPrec;
 
-			cout << "faceCourante = " << faceCourante << endl;
-			cout << "facePrecedente = " << facePrecedente << endl;
+			//cout << "faceCourante = " << faceCourante << endl;
+			//cout << "facePrecedente = " << facePrecedente << endl;
 
 			faces[faceCourante][0] = p;
 			faces[facePrecedente][1] = p;
@@ -119,8 +136,8 @@ Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
 			if (i > 0) {
 				faces[faceDessus][3] = p;
 				faces[faceDessusPrecedente][2] = p;
-				cout << "faceDessus = " << faceDessus << endl;
-				cout << "faceDessusPrecedente = " << faceDessusPrecedente << endl;
+				//cout << "faceDessus = " << faceDessus << endl;
+				//cout << "faceDessusPrecedente = " << faceDessusPrecedente << endl;
 			}
 		}
 	}

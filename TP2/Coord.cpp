@@ -39,6 +39,8 @@ double Coord::getZ() {
 	return z;
 }
 
+
+
 Coord::Coord(Coord& v) {
 	x = v.x;
 	y = v.y;

@@ -52,6 +52,7 @@ void *thread_1(void *arg) {
 	//render_scene();
     usleep(100*1000);
     thread_1(NULL);
+    return NULL;
 }
 
 void start_thread() {

@@ -60,6 +60,11 @@ void drawCylindre(Point*** tab, int nbrMeridiens) {
 	}
 }
 
+void drawCube(Point*** tab) {
+	drawCylindre(tab, 4);
+}
+
+
 void drawCone(Point*** tab, int nbrMeridiens) {
 	for (int i = 1; i < 1+nbrMeridiens; i++) {
 		cout << "face " << i << endl;

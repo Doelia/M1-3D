@@ -73,10 +73,15 @@ Point* getPt(Point* a, Point* b, double u) {
 	Point* out = new Point(	v->getX() + a->getX(),
 							v->getY() + a->getY(),
 							v->getZ() + a->getZ());
-	glBegin(GL_LINE_STRIP);
-		drawPoint(a);
-		drawPoint(b);
-	glEnd();
+
+	cout << u << endl;
+	if (u == 0.3) {
+		cout << "hey" << endl;
+		glBegin(GL_LINE_STRIP);
+			drawPoint(a);
+			drawPoint(b);
+		glEnd();
+	}
 	return out;
 }
 

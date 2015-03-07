@@ -21,6 +21,8 @@ public:
 	virtual void setX(double x);
 	virtual void setY(double y);
 	virtual void setZ(double z);
+	void set(Coord&);
+	
 };
 
 ostream& operator<<(ostream &flux, Coord& v);

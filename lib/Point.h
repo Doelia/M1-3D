@@ -11,7 +11,7 @@ public:
 	Point() : Coord() {};
 	Point(Point& v) : Coord(v) {};
 	Point(Coord& v) : Coord(v) {};
-
+	
 	Point* projectOnLine(Point*, Point*);
 	Point* projectOnLine(Vector*, Point*);
 	Point* projectOnPlan(Point*, Vector*);

@@ -22,7 +22,7 @@ public:
 	virtual void setY(double y);
 	virtual void setZ(double z);
 	virtual void add(Coord*);
-
+	void set(Coord&);
 };
 
 ostream& operator<<(ostream &flux, Coord& v);

@@ -58,3 +58,8 @@ ostream& operator<<(ostream &flux, Coord& v) {
     return flux;
 }
 
+void Coord::set(Coord &v) {
+	x = v.x;
+	y = v.y;
+	z = v.z;
+}

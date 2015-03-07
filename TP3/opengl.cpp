@@ -3,6 +3,8 @@
 #include <math.h>
 #include "../lib/Include.h"
 #include "ToolsOpenGL.h"
+#include <functional>
+
 
 #define WIDTH  480
 #define HEIGHT 480
@@ -67,6 +69,23 @@ void mouseButton(int button, int state, int x, int y) {
 	}
 }
 
+void init_scene() {
+	glPointSize(3);
+
+	pts3 = new Point*[nbr];
+	pts3[0] = new Point(0,0,0);
+	pts3[1] = new Point(1,2,0);
+	pts3[2] = new Point(3,3,0);
+	pts3[3] = new Point(2,2,0);
+
+	pts4 = new Point*[nbr];
+	pts4[0] = new Point(1,0,0);
+	pts4[1] = new Point(2,2,0);
+	pts4[2] = new Point(4,3,0);
+	pts4[3] = new Point(3,2,0);
+
+	modify = pts3[0];
+}
 
 int main(int argc, char **argv) {
 	glutInit(&argc, argv);
@@ -86,23 +105,6 @@ int main(int argc, char **argv) {
 }
 
 
-void init_scene() {
-	glPointSize(3);
-
-	pts3 = new Point*[nbr];
-	pts3[0] = new Point(0,0,0);
-	pts3[1] = new Point(1,2,0);
-	pts3[2] = new Point(3,3,0);
-	pts3[3] = new Point(2,2,0);
-
-	pts4 = new Point*[nbr];
-	pts4[0] = new Point(1,0,0);
-	pts4[1] = new Point(2,2,0);
-	pts4[2] = new Point(4,3,0);
-	pts4[3] = new Point(3,2,0);
-
-	modify = pts3[0];
-}
 
 GLvoid window_display() {
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -158,21 +160,18 @@ void projectAll(Point** pts, int nb) {
 	}
 }
 
-void render_scene() {
-
-	cout << "========================================================" << endl;
-	int nbrPoints = 25;
-	glClear(GL_COLOR_BUFFER_BIT);
+void exercice_1() {
+	int nbrPoints = 11;
 
 	std::function<Point*(double)> f1 = bezierCurveByBernstein(pts3, nbr);
-	std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
-	//std::function<Point*(double)> f2 = getDroite(new Point(1,2,0), new Point(2,3,0));
 	Point*** surfaceCylindrique = getSurfaceCylindrique(f1, new Vector(5,0,0), nbrPoints, nbrPoints);
-	//Point** pts2 = discretiser(f1,10);
 
-	// CALCULE EXERCICE 2
-	Point** pts2 = surface(f1,f3, 70, 30);
+	// Affichage
+	drawMatrice(surfaceCylindrique, nbrPoints, nbrPoints);
+	drawCurve(pts3, nbr);
+}
 
+void show_ptsControles() {
 	// AFFICHAGE POINTS BEZIER JAUNE/ROUGE
 	Point** pt3_c = copyPoints(pts3, nbr); // Points rouge
 	Point** pt4_c = copyPoints(pts4, nbr); // Points jaunes
@@ -183,39 +182,48 @@ void render_scene() {
 	glColor3f(1.0, 1.0, 0);
 	drawCurve(pt4_c, nbr);
 
-	// AFFICHAGE EXERCICE 1
-	drawMatrice(surfaceCylindrique, nbrPoints, nbrPoints);
+}
 
-	//*
-	// AFFICHAGE EXERCICE 2
-	projectAll(pts2, 70*30);
+void exercice_2() {
+	int nbrPoints = 11;
+	std::function<Point*(double)> f1 = bezierCurveByBernstein(pts3, nbr);
+	std::function<Point*(double)> f3 = bezierCurveByBernstein(pts4, nbr);
+	Point** pts2 = surface(f1,f3, 70, 30);
+	show_ptsControles();
+
+	// Affichage
+	//projectAll(pts2, 70*30);
 	glColor3f(0, 1.0, .5f);
 	drawPoints(pts2, 70*30);
-	//*/
+}
 
-	// CALCULE EXERCICE 3
+void exercice_3() {
+	int nbrPoints = 40;
+
 	int nbrU = nbr;
 	int nbrV = nbr;
+	glPointSize(5);
 	std::function<Point*(double, double)> f4 = surfaceByCasteljau(pts3, nbrU, pts4, nbrV);
+	glPointSize(2);
 	Point*** matrice = getMatriceFromBezier(pts3, nbrU, pts4, nbrV);
 	Point** pts5 = discretiserDouble(f4,nbrPoints,nbrPoints);
 	projectAll(pts5, nbrPoints*nbrPoints);
-	
-	//*
 	// AFFICHAGE EXERCICE 3
+	glPointSize(2);
 	glColor3f(0, 1.0, 1.0);
 	drawPoints(pts5, nbrPoints*nbrPoints);
-	for (int i = 0; i < nbrPoints; ++i) {
-		delete(pts5[i]);
-	}
 	glColor3f(0, 1.0, 0);
 	drawMatrice(matrice, nbrU, nbrV);
 	glColor3f(1.0, 1.0, 0);
+	show_ptsControles();
+}
 
-	//*/
 
-	delete(pt3_c);
-	delete(pt4_c);
+void render_scene() {
+
+	cout << "========================================================" << endl;
+	glClear(GL_COLOR_BUFFER_BIT);
+	exercice_3();
 	glFlush();
 
 }

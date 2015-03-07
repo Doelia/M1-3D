@@ -12,17 +12,14 @@
 #include <stdio.h>      
 #include <stdlib.h>     
 #include <math.h>
-#include "Vector.h"
-#include "Point.h"
-#include "ToolsOpenGL.h"
-
+#include "../lib/Include.h"
+#include "main.h"
 
 /* Dans les salles de TP, vous avez généralement accès aux glut dans C:\Dev. Si ce n'est pas le cas, téléchargez les .h .lib ...
 Vous pouvez ensuite y faire référence en spécifiant le chemin dans visual. Vous utiliserez alors #include <glut.h>. 
 Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h" 
 */
 
-#include "GlutIncluder.h"
 
 // Définition de la taille de la fenêtre
 #define WIDTH  480
@@ -39,6 +36,10 @@ Si vous mettez glut dans le répertoire courant, on aura alors #include "glut.h"
 #define KEY_ESC 27
 
 
+Vector* directionPlan = new Vector(0,0,1);
+Point* centerPlan = new Point(0,0,0);
+int m = 3; // Méridiens
+
 // Entêtes de fonctions
 void init_scene();
 void render_scene();
@@ -47,155 +48,190 @@ GLvoid window_display();
 GLvoid window_reshape(GLsizei width, GLsizei height); 
 GLvoid window_key(unsigned char key, int x, int y); 
 
-Point** pts3;
-Point* modify;
-int nbr = 5;
+void *thread_1(void *arg) {
+	//render_scene();
+    usleep(100*1000);
+    thread_1(NULL);
+    return NULL;
+}
+
+void start_thread() {
+	cout << "start_thread" << endl;
+	pthread_t thread1;
+    pthread_create(&thread1, NULL, thread_1, NULL);
+}
+
+float deltaAngleX = 0.0f;
+float deltaAngleY = 0.0f;
+int xOrigin = -1;
+int yOrigin = -1;
+
+void mouseMove(int x, int y) { 	
+    if (xOrigin >= 0) {
+		deltaAngleX = (x - xOrigin) * 0.001f;
+		deltaAngleY = (y - yOrigin) * 0.001f;
+		
+		float sinX = sin(deltaAngleX);
+		float sinY = sin(deltaAngleY);
+		float cosX = cos(deltaAngleX);
+		float cosY = cos(deltaAngleY);
+
+		directionPlan = new Vector(sinX*cosY, sinX*sinY, cosX);
+		directionPlan->normalize();
+		//cout << "directionPlan = " << *directionPlan << endl;
+		render_scene();
+	}
+}
+
+
+void mouseButton(int button, int state, int x, int y) {
+	if (button == GLUT_LEFT_BUTTON) {
+		if (state == GLUT_UP) {
+			xOrigin = -1;
+			yOrigin = -1;
+		}
+		else  {
+			xOrigin = x;
+			yOrigin = y;
+		}
+	}
+}
 
 int main(int argc, char **argv) 
 {  
-  // initialisation  des paramètres de GLUT en fonction
-  // des arguments sur la ligne de commande
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA);
+	glutInit(&argc, argv);
+	glutInitDisplayMode(GLUT_RGBA);
+	glutInitWindowPosition(0, 0);
+	glutInitWindowSize(WIDTH, HEIGHT);
+	glutCreateWindow("Premier exemple : carré");
 
-  // définition et création de la fenêtre graphique, ainsi que son titre
-  glutInitWindowSize(WIDTH, HEIGHT);
-  glutInitWindowPosition(0, 0);
-  glutCreateWindow("Premier exemple : carré");
+	initGL();  
+	init_scene();
 
-  // initialisation de OpenGL et de la scène
-  initGL();  
-  init_scene();
+	glutDisplayFunc(&window_display);
+	glutReshapeFunc(&window_reshape);
 
-  // choix des procédures de callback pour 
-  // le tracé graphique
-  glutDisplayFunc(&window_display);
-  // le redimensionnement de la fenêtre
-  glutReshapeFunc(&window_reshape);
-  // la gestion des événements clavier
-  glutKeyboardFunc(&window_key);
+	glutIgnoreKeyRepeat(1);
+	glutKeyboardFunc(&window_key);
+	glutMouseFunc(mouseButton);
+	glutMotionFunc(mouseMove);
+
+
+	glEnable(GL_BLEND);
 
   // la boucle prinicipale de gestion des événements utilisateur
-  glutMainLoop();  
+	glutMainLoop();  
 
-  return 1;
+	return 1;
 }
 
 // initialisation du fond de la fenêtre graphique : noir opaque
 GLvoid initGL() 
 {
-  glClearColor(RED, GREEN, BLUE, ALPHA);        
+	glClearColor(RED, GREEN, BLUE, ALPHA);   
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);     
 }
 
 // Initialisation de la scene. Peut servir à stocker des variables de votre programme
 // à initialiser
 void init_scene()
 {
-   glPointSize(3);
-
-   pts3 = new Point*[nbr];
-  pts3[0] = new Point(0,0,0);
-  pts3[1] = new Point(1,2,0);
-  pts3[2] = new Point(3,3,0);
-  pts3[3] = new Point(2,2,0);
-  pts3[4] = new Point(3,2,0);
-  modify = pts3[0];
+	glPointSize(3);
+	start_thread();
 }
+
+
 
 // fonction de call-back pour l´affichage dans la fenêtre
 
 GLvoid window_display()
 {
-  glClear(GL_COLOR_BUFFER_BIT);
-  glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT);
+	glLoadIdentity();
 
   // C'est l'endroit où l'on peut dessiner. On peut aussi faire appel
   // à une fonction (render_scene() ici) qui contient les informations 
   // que l'on veut dessiner
-  render_scene();
+	render_scene();
 
   // trace la scène grapnique qui vient juste d'être définie
-  glFlush();
+	glFlush();
 }
 
 // fonction de call-back pour le redimensionnement de la fenêtre
 
 GLvoid window_reshape(GLsizei width, GLsizei height)
 {  
-  glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
 
-  glMatrixMode(GL_PROJECTION);
-  glLoadIdentity();
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
   // ici, vous verrez pendant le cours sur les projections qu'en modifiant les valeurs, il est
   // possible de changer la taille de l'objet dans la fenêtre. Augmentez ces valeurs si l'objet est 
   // de trop grosse taille par rapport à la fenêtre.
-  int size = 5;
-  glOrtho(0, size, 0, size, -2, 2);
+	int size = 11;
+	glOrtho(-size, size, -size, size, -size*2, size*2);
   //glOrtho(0, size, 0, size, 0, size);
 
   // toutes les transformations suivantes s´appliquent au modèle de vue 
-  glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);
 }
-
-// fonction de call-back pour la gestion des événements clavier
 
 GLvoid window_key(unsigned char key, int x, int y) 
 {  
-  switch (key) {    
-  case KEY_ESC:  
-    exit(1);                    
-    break; 
+	switch (key) {    
+		case KEY_ESC:  
+		exit(1);                    
+		break; 
 
+		case 43: m++; break; // +
+		case 45: m--; break; // --
   case 97: // a
-  modify = pts3[0]; break;
   case 122: // z
-   modify = pts3[1]; break;
   case 101: // e
-   modify = pts3[2]; break;
   case 114: // r
-   modify = pts3[3]; break;
-    case 113: // q (changer couleur)
-  modify = pts3[4]; break;
 
   case 111: // o (haut)
-    modify->setY(modify->getY()+.4); break;
   case 108: // l (bas)
-     modify->setY(modify->getY()-.4); break;
   case 107: // k (gauche)
-     modify->setX(modify->getX()-.4); break;
   case 109: // k (droite)
-     modify->setX(modify->getX()+.4); break;
 
-  default:
-    printf ("La touche %d n´est pas active.\n", key);
-    break;
-  }     
 
-  render_scene();
+ case 113: // q
+ case 115: // s 
+
+ default:
+ printf ("La touche %d n´est pas active.\n", key);
+ break;
+}     
+
+render_scene();
 }
+
+void projectAll(Point** pts, int nb) {
+	for (int i = 0; i < nb; ++i) {
+		pts[i] = pts[i]->projectOnPlan(centerPlan, directionPlan);
+	}
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////////////
 // Fonction que vous allez modifier afin de dessiner
 /////////////////////////////////////////////////////////////////////////////////////////
 void render_scene()
 {
+	glClear(GL_COLOR_BUFFER_BIT);
 
-  glClear(GL_COLOR_BUFFER_BIT);
 
-  // HERMITE
-  glColor3f(0, 0, 1.0);
-  Point** ptsHermite = hermiteCurve(new Point(0,0,0), new Point(2,0,0), new Vector(1,1,0), new Vector(1,-1,0), 1);
-  drawCurve(ptsHermite, 1);
+	cout << "==================  RENDER  =======================" << endl;
 
-  // BEZIER
-  //Point** pts2 = bezierCurveByBernstein(pts3, nbr, 10);
-  Point** pts2 = bezierCurveByCasteljau(pts3, nbr, 11);
-  
-  glColor3f(0, 1.0, 1.0);
-  drawCurve(pts2, 11);
-  glColor3f(1.0, 0, 0);
-  drawCurve(pts3, nbr);
-  glFlush();
+	Voxel v(new Point(0,0,0), 4);
+	v.draw();
+
+	glColor4f(0, 1.0f, 0, 0.5f);
+
+	glRotatef(3, 1.0f, 0.5f, 0.1f);
+	glFlush();
 
 }
 

@@ -1,6 +1,3 @@
-#ifndef INC_H
-#define INC_H
-
 #include "Vector.h"
 #include "Point.h"
 #include "GlutIncluder.h"
@@ -8,6 +5,9 @@
 #include "Geometry.h"
 #include <unistd.h>
 #include <pthread.h>
+
+#ifndef INC_H
+#define INC_H
 
 void drawPoint(Coord* c) {
 	glVertex3f(c->getX(), c->getY(), c->getZ());
@@ -47,34 +47,6 @@ void drawFace(Point** tab, int x) {
 	glEnd();
 }
 
-void drawCylindre(Point*** tab, int nbrMeridiens) {
-	for (int i = 2; i < 2+nbrMeridiens; i++) {
-		Point** face = tab[i];
-		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
-		drawFace(face, 4);
-	}
-	for (int i = 0; i < 2; i++) {
-		Point** face = tab[i];
-		glColor4f(.5f, 1, 1, 0.5f);
-		drawFace(face, nbrMeridiens);
-	}
-}
-
-void drawCube(Point*** tab) {
-	drawCylindre(tab, 4);
-}
-
-
-void drawCone(Point*** tab, int nbrMeridiens) {
-	for (int i = 1; i < 1+nbrMeridiens; i++) {
-		cout << "face " << i << endl;
-		Point** face = tab[i];
-		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
-		drawFace(face, 4);
-	}
-	glColor4f(.5f, 1, 1, 0.5f);
-	drawFace(tab[0], nbrMeridiens);
-}
 
 Point** copyPoints(Point** tab, int n) {
 	Point** out = new Point*[n];

@@ -3,7 +3,7 @@
 
 #include "Point.h"
 #include "Math.h"
-
+#include "Include.h"
 
 // Généré à partir de O en (0,0,0)
 Point*** generateCylindre(int r, int h, int m) {
@@ -78,20 +78,17 @@ Point*** generateCone(int r, Point* sommet, int h, int m) {
 
 
 float getRayon(float r, float u) {
-	if (u < .5f) {
-		return r*u*2;
-	} else {
-		return r*(1-u)*2;
-	}
+	return r * sin(u*M_PI);
 }
 
 Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
 	Point*** faces = new Point**[paralleles*meridiens];
+	for (int i = 0; i < meridiens*paralleles; i++) {
+		faces[i] = new Point*[4];
+	}
 
 	Point poleNord(*center);
 	poleNord.setY(poleNord.getY()+r/2);
-
-	int cpt = 0;
 
 	for (int i = 0; i < paralleles; ++i) {
 		double u = 1.0/(paralleles-1) * (double) i;
@@ -103,52 +100,73 @@ Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
 			Point* p = new Point (rayon * cos(angle), 0, rayon * sin(angle));
 			p->add(&d);
 
-			faces[i*j][0] = p;
-			int precedent = (j == 0) ? meridiens-1 : i-1;
-			faces[precedent*j][1] = p;
+			int iPrec = i - 1;
+			int jPrec =(j == 0) ? meridiens-1 : j-1;
 
-			// Raccorchement avec en dessous
-		
+			cout << "Traitement " << i << ", " << j << endl;
 
-			cpt++;
+			int faceCourante = i*paralleles + j;
+			int facePrecedente = i*paralleles  + jPrec;
+			int faceDessus = iPrec*paralleles + j;
+			int faceDessusPrecedente = iPrec*paralleles + jPrec;
+
+			cout << "faceCourante = " << faceCourante << endl;
+			cout << "facePrecedente = " << facePrecedente << endl;
+
+			faces[faceCourante][0] = p;
+			faces[facePrecedente][1] = p;
+
+			if (i > 0) {
+				faces[faceDessus][3] = p;
+				faces[faceDessusPrecedente][2] = p;
+				cout << "faceDessus = " << faceDessus << endl;
+				cout << "faceDessusPrecedente = " << faceDessusPrecedente << endl;
+			}
 		}
-
-
 	}
 
 	return faces;
 }
 
+void drawCylindre(Point*** tab, int nbrMeridiens) {
+	for (int i = 2; i < 2+nbrMeridiens; i++) {
+		Point** face = tab[i];
+		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
+		drawFace(face, 4);
+	}
+	for (int i = 0; i < 2; i++) {
+		Point** face = tab[i];
+		glColor4f(.5f, 1, 1, 0.5f);
+		drawFace(face, nbrMeridiens);
+	}
+}
 
+void drawCube(Point*** tab) {
+	drawCylindre(tab, 4);
+}
 
+void drawCone(Point*** tab, int nbrMeridiens) {
+	for (int i = 1; i < 1+nbrMeridiens; i++) {
+		cout << "face " << i << endl;
+		Point** face = tab[i];
+		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
+		drawFace(face, 4);
+	}
+	glColor4f(.5f, 1, 1, 0.5f);
+	drawFace(tab[0], nbrMeridiens);
+}
 
-
-
-
-
+void drawSphere(Point*** tab, int m, int l) {
+	cout << "Nombre de faces = " << m*l << endl;
+	for (int i = 0; i < l-1; ++i) {
+		for (int j = 0; j < m; ++j) {
+			int cpt = i*l + j;
+			Point** face = tab[cpt];
+			glColor4f(1, 0, (double) i / (double) m, .5f);
+			drawFace(face, 4);
+		}
+	}
+}
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

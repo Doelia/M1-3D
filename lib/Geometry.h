@@ -48,7 +48,7 @@ Point*** generateCylindre(int r, float h, int m) {
 Point*** generateCube(float r, Vector v) {
 
 	float h = r;
-	r = sqrt(2) / 2;
+	r = sqrt(pow(h,2)+pow(h,2)) / 2.0;
 
 	Point*** faces = new Point**[6];
 	
@@ -57,8 +57,8 @@ Point*** generateCube(float r, Vector v) {
 	}
 							
 	for (int i = 0; i < 4; ++i) {
-		float step = (float) i / 4.0;
-		double angle = 2.0f * M_PI * step + M_PI/4;
+		float step = (float) i / 4.0f;
+		double angle = 2.0f * M_PI * step + M_PI/4.0f;
 		
 		faces[0][i] = new Point(
 			r * cos(angle),

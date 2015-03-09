@@ -151,7 +151,8 @@ void tests() {
 }
 
 void exercice1() {
-	drawShpere();
+	Point p(0,0,0);
+	drawShpereAdaptatif(p, 5, 5);
 }
 
 void render_scene() {

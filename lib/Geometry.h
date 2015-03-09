@@ -6,7 +6,7 @@
 #include "Include.h"
 
 // Généré à partir de O en (0,0,0)
-Point*** generateCylindre(int r, int h, int m) {
+Point*** generateCylindre(int r, float h, int m) {
 
 	Point*** faces = new Point**[2+m];
 	
@@ -44,6 +44,50 @@ Point*** generateCylindre(int r, int h, int m) {
 
 	return faces;
 }
+
+Point*** generateCube(float r, Vector v) {
+
+	float h = r;
+	r = sqrt(2) / 2;
+
+	Point*** faces = new Point**[6];
+	
+	for (int i =0; i < 6; i++) {
+		faces[i] = new Point*[4];
+	}
+							
+	for (int i = 0; i < 4; ++i) {
+		float step = (float) i / 4.0;
+		double angle = 2.0f * M_PI * step + M_PI/4;
+		
+		faces[0][i] = new Point(
+			r * cos(angle),
+			(double) h / 2.0f,
+			r * sin(angle)
+		);
+
+		
+		faces[1][i] = new Point(
+			r * cos(angle),
+			- (double) h / 2.0f,
+			r * sin(angle)
+		);
+
+		faces[0][i]->add(&v);
+		faces[1][i]->add(&v);
+
+		faces[i+2][0] = faces[0][i];
+		faces[i+2][1] = faces[1][i];
+		
+		int precedent = (i == 0) ? 3 : i-1;
+		faces[precedent+2][3] = faces[0][i];
+		faces[precedent+2][2] = faces[1][i];
+	}
+
+	return faces;
+}
+
+
 
 Point*** generateCone(int r, Point* sommet, int h, int m) {
 
@@ -124,43 +168,6 @@ Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
 	return faces;
 }
 
-void drawCylindre(Point*** tab, int nbrMeridiens) {
-	for (int i = 2; i < 2+nbrMeridiens; i++) {
-		Point** face = tab[i];
-		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
-		drawFace(face, 4);
-	}
-	for (int i = 0; i < 2; i++) {
-		Point** face = tab[i];
-		glColor4f(.5f, 1, 1, 0.5f);
-		drawFace(face, nbrMeridiens);
-	}
-}
-
-void drawCube(Point*** tab) {
-	drawCylindre(tab, 4);
-}
-
-void drawCone(Point*** tab, int nbrMeridiens) {
-	for (int i = 1; i < 1+nbrMeridiens; i++) {
-		Point** face = tab[i];
-		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
-		drawFace(face, 4);
-	}
-	glColor4f(.5f, 1, 1, 0.5f);
-	drawFace(tab[0], nbrMeridiens);
-}
-
-void drawSphere(Point*** tab, int m, int l) {
-	for (int i = 0; i < l-1; ++i) {
-		for (int j = 0; j < m; ++j) {
-			int cpt = i*l + j;
-			Point** face = tab[cpt];
-			glColor4f(1, 0, (double) i / (double) m, .5f);
-			drawFace(face, 4);
-		}
-	}
-}
 
 #endif
 

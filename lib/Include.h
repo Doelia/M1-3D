@@ -40,7 +40,8 @@ void drawMatrice(Point*** tab, int u, int v) {
 }
 
 void drawFace(Point** tab, int x) {
-	glBegin(GL_POLYGON);
+	//glBegin(GL_LINE_STRIP);
+	glBegin(GL_QUADS);
 	for (int i = 0; i < x; ++i) {
 		drawPoint(tab[i]);
 	}
@@ -55,6 +56,46 @@ Point** copyPoints(Point** tab, int n) {
 	}
 	return out;
 }
+
+
+void drawCylindre(Point*** tab, int nbrMeridiens) {
+	for (int i = 2; i < 2+nbrMeridiens; i++) {
+		Point** face = tab[i];
+		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
+		drawFace(face, 4);
+	}
+	for (int i = 0; i < 2; i++) {
+		Point** face = tab[i];
+		glColor4f(.5f, 1, 1, 0.5f);
+		drawFace(face, nbrMeridiens);
+	}
+}
+
+void drawCube(Point*** tab) {
+	drawCylindre(tab, 4);
+}
+
+void drawCone(Point*** tab, int nbrMeridiens) {
+	for (int i = 1; i < 1+nbrMeridiens; i++) {
+		Point** face = tab[i];
+		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
+		drawFace(face, 4);
+	}
+	glColor4f(.5f, 1, 1, 0.5f);
+	drawFace(tab[0], nbrMeridiens);
+}
+
+void drawSphere(Point*** tab, int m, int l) {
+	for (int i = 0; i < l-1; ++i) {
+		for (int j = 0; j < m; ++j) {
+			int cpt = i*l + j;
+			Point** face = tab[cpt];
+			glColor4f(1, 0, (double) i / (double) m, .5f);
+			drawFace(face, 4);
+		}
+	}
+}
+
 
 
 

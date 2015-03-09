@@ -19,7 +19,7 @@ class Sphere {
 	bool appartient(const Point& p) {
 		float sum = pow(p.getX() - center.getX(), 2) + pow(p.getY() - center.getY(), 2) + pow(p.getZ() - center.getZ(), 2);
 		float rCarre = pow(rayon, 2);
-		return (sum - rCarre) < 5.0f && (sum - rCarre) > -5.0f;
+		return (sum - rCarre) == 0;
 	}
 };
 
@@ -35,21 +35,10 @@ public:
 
 	Point*** getFaces() {
 
-		int m = 4;
 		float r = (float) size;
-		float h = (float) size;
 
-		int nbrFaces = 6;
-
-		Point*** faces = generateCylindre(r, h, m);
-
-		for (int i = 0; i < nbrFaces; ++i) {
-			for (int j = 0; j < 4; ++j) {
-				Vector v(*faces[i][j]);
-				v.add(p);
-				faces[i][j]->set(v);
-			}
-		}
+		Vector v(*p);
+		Point*** faces = generateCube(r, v);
 
 		return faces;
 	}

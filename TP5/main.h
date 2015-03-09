@@ -9,10 +9,10 @@
 
 class Voxel {
 	Point* p;
-	int size;
+	float size;
 
 public:
-	Voxel(Point* p, int size) {
+	Voxel(Point* p, float size) {
 		this->p = p;
 		this->size = size;
 	}
@@ -20,8 +20,8 @@ public:
 	Point*** getFaces() {
 
 		int m = 4;
-		int r = size;
-		int h = size;
+		float r = (float) size;
+		float h = (float) size;
 
 		int nbrFaces = 6;
 

@@ -30,6 +30,9 @@ Point*** generateCylindre(int r, int h, int m) {
 			- (double) h / 2.0f,
 			r * sin(angle)
 		);
+
+		cout << "Point en haut : " << *faces[0][i] << endl;
+		cout << "Point en bas : " << *faces[1][i] << endl;
 		
 		faces[i+2][0] = faces[0][i];
 		faces[i+2][1] = faces[1][i];
@@ -102,7 +105,7 @@ Point*** generateSphere(int r, Point* center, int meridiens, int paralleles) {
 
 			int iPrec = i - 1;
 			int jPrec = (j == 0) ? meridiens-1 : j-1;
-
+			
 			int faceCourante = i*paralleles + j;
 			int facePrecedente = i*paralleles  + jPrec;
 			int faceDessus = iPrec*paralleles + j;

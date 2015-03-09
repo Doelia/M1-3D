@@ -27,15 +27,15 @@ void Coord::setZ(double z) {
 	this->z = z;
 }
 
-double Coord::getX() {
+double Coord::getX() const {
 	return x;
 }
 
-double Coord::getY() {
+double Coord::getY() const {
 	return y;
 }
 
-double Coord::getZ() {
+double Coord::getZ() const {
 	return z;
 }
 

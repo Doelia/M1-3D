@@ -15,9 +15,9 @@ public:
 	Coord();
 	Coord(Coord&);
 
-	virtual double getX();
-	virtual double getY();
-	virtual double getZ();
+	const virtual double getX();
+	const virtual double getY();
+	const virtual double getZ();
 	virtual void setX(double x);
 	virtual void setY(double y);
 	virtual void setZ(double z);

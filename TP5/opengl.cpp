@@ -17,7 +17,7 @@
 Vector* directionPlan = new Vector(0,0,1);
 Point* centerPlan = new Point(0,0,0);
 int m = 3; // Méridiens
-int size = 100; // Taille du repére
+int size = 50; // Taille du repére
 
 
 void init_scene();
@@ -156,15 +156,16 @@ void projectAll(Point** pts, int nb) {
 	}
 }
 
+void exercice1() {
+	drawShpere();
+}
+
 void render_scene() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	cout << "==================  RENDER  =======================" << endl;
-	Voxel v(new Point(1,0,0), 2);
-	v.draw();
-	Voxel v2(new Point(0,1,0), 2);
-	v2.draw();
+	exercice1();
 	glColor4f(0, 1.0f, 0, 0.5f);
-	glRotatef(3, 1.0f, 0.5f, 0.1f);
+	glRotatef(3, 1.0f, 1.0f, 0.1f);
 	glFlush();
 }
 

@@ -31,8 +31,8 @@ Point*** generateCylindre(int r, int h, int m) {
 			r * sin(angle)
 		);
 
-		cout << "Point en haut : " << *faces[0][i] << endl;
-		cout << "Point en bas : " << *faces[1][i] << endl;
+		//cout << "Point en haut : " << *faces[0][i] << endl;
+		//cout << "Point en bas : " << *faces[1][i] << endl;
 		
 		faces[i+2][0] = faces[0][i];
 		faces[i+2][1] = faces[1][i];

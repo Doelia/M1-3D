@@ -1,5 +1,5 @@
 #include <stdio.h>      
-#include <stdlib.h>     
+#include <stdlib.h>    
 #include <math.h>
 #include "../lib/Include.h"
 #include "main.h"
@@ -15,7 +15,7 @@
 #define KEY_ESC 27
 
 int m = 3; // Méridiens
-int size = 20; // Taille du repére
+int size = 10; // Taille du repére
 
 void init_scene();
 void render_scene();

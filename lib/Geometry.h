@@ -147,7 +147,6 @@ void drawCube(Point*** tab) {
 
 void drawCone(Point*** tab, int nbrMeridiens) {
 	for (int i = 1; i < 1+nbrMeridiens; i++) {
-		cout << "face " << i << endl;
 		Point** face = tab[i];
 		glColor4f(1, 0, (double) i / (double) nbrMeridiens, .5f);
 		drawFace(face, 4);
@@ -157,7 +156,6 @@ void drawCone(Point*** tab, int nbrMeridiens) {
 }
 
 void drawSphere(Point*** tab, int m, int l) {
-	cout << "Nombre de faces = " << m*l << endl;
 	for (int i = 0; i < l-1; ++i) {
 		for (int j = 0; j < m; ++j) {
 			int cpt = i*l + j;

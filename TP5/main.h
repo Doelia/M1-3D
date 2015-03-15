@@ -37,7 +37,18 @@ public:
 		return faces;
 	}
 
-	void draw() {
+	void draw(int idColor) {
+		switch (idColor) {
+			case 1:
+				glColor4f(.5f, 1, 1, 0.2f);
+				break;
+			case 2:
+				glColor4f(1, 0.5f, 1, 0.2f);
+				break;
+			case 3:
+				glColor4f(1, 1, .5f, 0.2f);
+				break;
+		}
 		drawCube(getFaces());
 	}
 
@@ -69,27 +80,34 @@ class Sphere {
 		this->rayon = rayon;
 	}
 
-	bool appartient(const Point& p) {
+	float equation(const Point& p) {
 		float sum = pow(p.getX() - center.getX(), 2) + pow(p.getY() - center.getY(), 2) + pow(p.getZ() - center.getZ(), 2);
 		float rCarre = pow(rayon, 2);
-		return (sum - rCarre) < 0;
+		return sum - rCarre;
 	}
 
 	bool intersect(const Point&p, float tolerance) {
-		float sum = pow(p.getX() - center.getX(), 2) + pow(p.getY() - center.getY(), 2) + pow(p.getZ() - center.getZ(), 2);
-		float rCarre = pow(rayon, 2);
-		return (sum - rCarre) < tolerance && (sum - rCarre) > -tolerance;
+		float r = equation(p);
+		return r < tolerance && r > -tolerance;
 	}
 
-	bool appartient(Voxel& p) {
+	bool isOn(const Voxel& p) {
 		return this->intersect(*(p.p), p.size*5);
+	}
+
+	bool isOut(const Voxel& p) {
+		return equation(*p.p) > 0;
+	}
+
+	bool isIn(const Voxel& p) {
+		return equation(*p.p) > 0;
 	}
 };
 
 void goAlgo(Sphere& s, Voxel v, float resolution) {
-	if (s.appartient(v)) {
+	if (s.isOn(v)) {
 		if (resolution == 1) {
-			v.draw();
+			v.draw(2);
 		} else {
 			Voxel* tab = v.decoupe();
 			for (int i = 0; i < 8; ++i) {
@@ -97,7 +115,10 @@ void goAlgo(Sphere& s, Voxel v, float resolution) {
 			}
 		}
 	} else {
-		
+		if (s.isIn(v))
+			v.draw(1);
+		else
+			v.draw(3);
 	}
 }
 
@@ -128,9 +149,10 @@ void drawShpere(Point center, float r, float resolution) {
 			for (float k = minZ; k <= maxZ; k += sizeVoxel) {
 				//cout << i << ", " << j << ", " << k << endl;
 				Point p(i,j,k);
-				if (s.appartient(p)) {
+				Voxel v(&p,1);
+				if (s.isOn(v)) {
 					Voxel v(&p,sizeVoxel);
-					v.draw();
+					v.draw(1);
 				}
 			}
 		}

@@ -46,6 +46,12 @@ void Coord::add(Coord* v) {
 	this->z += v->getZ();
 }
 
+void Coord::multiply(const Coord* v) {
+	this->x *= v->getX();
+	this->y *= v->getY();
+	this->z *= v->getZ();
+}
+
 
 Coord::Coord(Coord& v) {
 	x = v.x;
@@ -62,4 +68,8 @@ void Coord::set(Coord &v) {
 	x = v.x;
 	y = v.y;
 	z = v.z;
+}
+
+float Coord::sum() {
+	return x+y+z;
 }

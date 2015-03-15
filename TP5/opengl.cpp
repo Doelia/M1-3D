@@ -145,7 +145,9 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 void exercice1() {
 	Point p(0,0,0);
-	drawShpereAdaptatif(p, 5, 6);
+	//drawShpereAdaptatif(p, 5, 6);
+	Vector v(1,0,0);
+	drawCilrindreAdaptatif(p, 5, v, 6);
 }
 
 void render_scene() {

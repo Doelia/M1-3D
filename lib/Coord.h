@@ -22,6 +22,8 @@ public:
 	virtual void setY(double y);
 	virtual void setZ(double z);
 	virtual void add(Coord*);
+	virtual void multiply(const Coord*);
+	virtual float sum();
 	void set(Coord&);
 };
 

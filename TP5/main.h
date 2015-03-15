@@ -9,19 +9,25 @@
 #include "Voxel.h"
 #include <Vector>
 
-void goAlgo(Figure& s, Voxel v, float resolution, vector<Voxel>* voxels) {
-	if (s.isOn(v)) {
+void drawVoxels(vector<Voxel> tab) {
+	for (auto v : tab) {
+		v.draw(v.flag);
+	}
+}
+
+void goAlgo(std::function<int(Voxel)> f, Voxel v, float resolution, vector<Voxel>* voxels) {
+	if (f(v) == 1) { // IS ON
 		if (resolution == 1) {
 			v.flag = 2;
 			voxels->push_back(v);
 		} else {
 			Voxel* tab = v.decoupe();
 			for (int i = 0; i < 8; ++i) {
-				goAlgo(s, tab[i], resolution-1, voxels);
+				goAlgo(f, tab[i], resolution-1, voxels);
 			}
 		}
 	} else {
-		if (s.isIn(v))
+		if (f(v) == 2) // IS IN
 			v.flag = 1;
 		else
 			v.flag = 3;
@@ -29,17 +35,55 @@ void goAlgo(Figure& s, Voxel v, float resolution, vector<Voxel>* voxels) {
 	}
 }
 
-void drawVoxels(vector<Voxel> tab) {
-	for (auto v : tab) {
-		v.draw(v.flag);
-	}
+std::function<int(Voxel)> generateFunctionUnique(Figure* s) {
+	auto prototype = [] (Figure* c) -> std::function<int(Voxel)>
+	{ return ([=] (Voxel v) {
+		if (c->isOn(v))
+			return 1;
+		else if (c->isIn(v))
+			return 2;
+		else if (c->isOut(v))
+			return 3;
+		return 0;
+	}); };
+	auto f = prototype(s);
+	return f;
+}
+
+std::function<int(Voxel)> generateFunctionMinus(Figure* s1, Figure* s2) {
+	auto prototype = [] (Figure* c1, Figure* c2) -> std::function<int(Voxel)>
+	{ return ([=] (Voxel v) {
+		if (c1->isOn(v) && c2->isOn(v))
+			return 1;
+		else if (c1->isIn(v) && c2->isIn(v))
+			return 2;
+		else if (c1->isOut(v) && c2->isOut(v))
+			return 3;
+		return 0;
+	}); };
+	auto f = prototype(s1, s2);
+	return f;
+}
+
+vector<Voxel>* octreeMethod(std::function<int(Voxel)> f, float resolution, Voxel v) {
+	vector<Voxel>* voxels = new vector<Voxel>();
+	goAlgo(f, v, resolution, voxels);
+	return voxels;
+}
+
+void intesectSphereCilynder(Point center, float rSphere, float rCilyndre, Vector axe, float resolution) {
+	Voxel v(&center, rSphere*2);
+	Sphere s1(center, rSphere);
+	Cilynder s2(center, axe, rCilyndre);
+	vector<Voxel>* voxels = octreeMethod(generateFunctionMinus(&s1, &s2), resolution, v);
+	drawVoxels(*voxels);
+	delete(voxels);
 }
 
 void drawShpereAdaptatif(Point center, float r, float resolution) {
 	Voxel v(&center, r*2);
 	Sphere s(center, r);
-	vector<Voxel>* voxels = new vector<Voxel>();
-	goAlgo(s, v, resolution, voxels);
+	vector<Voxel>* voxels = octreeMethod(generateFunctionUnique(&s), resolution, v);
 	drawVoxels(*voxels);
 	delete(voxels);
 }
@@ -47,43 +91,10 @@ void drawShpereAdaptatif(Point center, float r, float resolution) {
 void drawCilrindreAdaptatif(Point center, float r, Vector axe, float resolution) {
 	Voxel v(&center, r*2);
 	Cilynder s(center, axe, r);
-	vector<Voxel>* voxels = new vector<Voxel>();
-	goAlgo(s, v, resolution, voxels);
+	vector<Voxel>* voxels = octreeMethod(generateFunctionUnique(&s), resolution, v);
 	drawVoxels(*voxels);
 	delete(voxels);
 }
-
-void drawShpere(Point center, float r, float resolution) {
-	int sizeRepere = r;
-
-	int minX = -sizeRepere - center.getX();
-	int minY = -sizeRepere - center.getY();
-	int minZ = -sizeRepere - center.getZ();
-	int maxX = sizeRepere + center.getX();
-	int maxY = sizeRepere + center.getY();
-	int maxZ = sizeRepere + center.getZ();
-
-	float sizeVoxel = r*2.0f / resolution;
-	//cout << "sizeVoxel = " << sizeVoxel << endl;
-
-	Sphere s(center, r);
-
-	for (float i = minX; i <= maxX; i += sizeVoxel) {
-		for (float j = minY; j <= maxY; j += sizeVoxel) {
-			for (float k = minZ; k <= maxZ; k += sizeVoxel) {
-				//cout << i << ", " << j << ", " << k << endl;
-				Point p(i,j,k);
-				Voxel v(&p,1);
-				if (s.isOn(v)) {
-					Voxel v(&p,sizeVoxel);
-					v.draw(1);
-				}
-			}
-		}
-	}
-}
-
-
 
 
 #endif

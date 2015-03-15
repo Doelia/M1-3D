@@ -25,15 +25,15 @@ void Coord::setZ(double z) {
 	this->z = z;
 }
 
-double Coord::getX() {
+const double Coord::getX() {
 	return x;
 }
 
-double Coord::getY() {
+const double Coord::getY() {
 	return y;
 }
 
-double Coord::getZ() {
+const double Coord::getZ() {
 	return z;
 }
 

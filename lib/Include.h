@@ -72,7 +72,10 @@ void drawCylindre(Point*** tab, int nbrMeridiens) {
 }
 
 void drawCube(Point*** tab) {
-	drawCylindre(tab, 4);
+	for (int i = 0; i < 4; i++) {
+		Point** face = tab[i];
+		drawFace(face, 4);
+	}
 }
 
 void drawCone(Point*** tab, int nbrMeridiens) {

@@ -143,16 +143,9 @@ GLvoid window_key(unsigned char key, int x, int y)
 	render_scene();
 }
 
-void tests() {
-	Voxel v1(new Point(0,0,0), 1);
-	Voxel v2(new Point(1,0,0), 1);
-	v1.draw();
-	v2.draw();
-}
-
 void exercice1() {
 	Point p(0,0,0);
-	drawShpereAdaptatif(p, 5, 5);
+	drawShpereAdaptatif(p, 5, 6);
 }
 
 void render_scene() {

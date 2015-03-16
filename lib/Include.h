@@ -40,8 +40,8 @@ void drawMatrice(Point*** tab, int u, int v) {
 }
 
 void drawFace(Point** tab, int x) {
-	//glBegin(GL_LINE_STRIP);
-	glBegin(GL_QUADS);
+	glBegin(GL_LINE_STRIP);
+	//glBegin(GL_QUADS);
 	for (int i = 0; i < x; ++i) {
 		drawPoint(tab[i]);
 	}

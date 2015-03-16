@@ -146,25 +146,25 @@ GLvoid window_key(unsigned char key, int x, int y)
 void exercice2() {
 	Point p(0,0,0);
 	Vector v(1,0,0);
-	//intesectSphereCilynder(p, 5, 5, v, 5);
-	intesectSphereCilynder(p, 5, 3, v, 5);
+	intesectSphereCilynder(p, 5, 2, v, 5);
 }
 
 void exercice1_shpere() {
 	Point p(0,0,0);
-	drawShpereAdaptatif(p, 5, 6);
+	drawShpereAdaptatif(p, 5, 5);
 }
 
 void exercice1_cilynder() {
 	Point p(0,0,0);
-	Vector v(1,0,0);
-	drawCilrindreAdaptatif(p, 5, v, 6);
+	Vector v(0,1,0);
+	drawCilrindreAdaptatif(p, 5, v, 5);
 }
 
 void render_scene() {
 	cout << "==================  RENDER  =======================" << endl;
-	exercice1_shpere();
-	//exercice2();
+	//exercice1_shpere();
+	//exercice1_cilynder();
+	exercice2();
 	//tests();
 }
 

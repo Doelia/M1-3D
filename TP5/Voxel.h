@@ -48,6 +48,8 @@ public:
 			case 3:
 				glColor4f(1, 1, .5f, 0.2f);
 				break;
+			default:
+				return;
 		}
 		drawCube(getFaces());
 	}

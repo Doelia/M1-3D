@@ -26,7 +26,7 @@ public:
 	}
 
 	virtual bool isIn(const Voxel& p) {
-		return equation(*p.p) > 0;
+		return equation(*p.p) < 0;
 	}
 };
 

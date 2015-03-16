@@ -14,7 +14,6 @@
 
 #define KEY_ESC 27
 
-int m = 3; // Méridiens
 int size = 10; // Taille du repére
 
 void init_scene();
@@ -23,18 +22,6 @@ GLvoid initGL();
 GLvoid window_display();
 GLvoid window_reshape(GLsizei width, GLsizei height); 
 GLvoid window_key(unsigned char key, int x, int y); 
-
-void *thread_1(void *arg) {
-    usleep(100*1000);
-    thread_1(NULL);
-    return NULL;
-}
-
-void start_thread() {
-	cout << "start_thread" << endl;
-	pthread_t thread1;
-    pthread_create(&thread1, NULL, thread_1, NULL);
-}
 
 GLint winWidth=WIDTH, winHeight=HEIGHT;
 GLfloat eyeX=0.0, eyeY=0.0, eyeZ=2.0;
@@ -96,7 +83,6 @@ GLvoid initGL()  {
 
 void init_scene() {
 	glPointSize(3);
-	start_thread();
 }
 
 GLvoid window_display() {
@@ -123,8 +109,8 @@ GLvoid window_key(unsigned char key, int x, int y)
 	case KEY_ESC:  
 		exit(1);                    
 		break; 
-	case 43: m++; break; // +
-	case 45: m--; break; // --
+	case 43: break; // +
+	case 45: break; // --
 	case 97: // a
 	case 122: // z
 	case 101: // e
@@ -143,28 +129,14 @@ GLvoid window_key(unsigned char key, int x, int y)
 	render_scene();
 }
 
-void exercice2() {
-	Point p(0,0,0);
-	Vector v(1,0,0);
-	//intesectSphereCilynder(p, 5, 5, v, 5);
-	intesectSphereCilynder(p, 5, 3, v, 5);
+void exercice1() {
+	vector<Face> faces = parseFile("res/test.ttl");
+	Face::drawSet(faces);
 }
 
-void exercice1_shpere() {
-	Point p(0,0,0);
-	drawShpereAdaptatif(p, 5, 6);
-}
-
-void exercice1_cilynder() {
-	Point p(0,0,0);
-	Vector v(1,0,0);
-	drawCilrindreAdaptatif(p, 5, v, 6);
-}
 
 void render_scene() {
 	cout << "==================  RENDER  =======================" << endl;
-	//exercice1_cilynder();
-	exercice2();
-	//tests();
+	exercice1();
 }
 

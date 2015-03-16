@@ -9,7 +9,7 @@ private:
 public:
 	Vector(double x, double y, double z) : Coord(x, y, z) {};
 	Vector() : Coord() {};
-	Vector(Coord& v) : Coord(v) {};
+	Vector(const Coord& v) : Coord(v) {};
 	Vector(Coord* a, Coord* b);
 
 	double getNorme();

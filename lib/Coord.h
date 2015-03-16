@@ -13,7 +13,8 @@ protected:
 public:
 	Coord(double x, double y, double z);
 	Coord();
-	Coord(Coord&);
+	Coord(const Coord&);
+	~Coord();
 
 	virtual double getX() const;
 	virtual double getY() const;

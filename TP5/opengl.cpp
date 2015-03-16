@@ -163,8 +163,8 @@ void exercice1_cilynder() {
 
 void render_scene() {
 	cout << "==================  RENDER  =======================" << endl;
-	//exercice1_cilynder();
-	exercice2();
+	exercice1_shpere();
+	//exercice2();
 	//tests();
 }
 

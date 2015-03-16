@@ -14,7 +14,7 @@
 
 #define KEY_ESC 27
 
-int size = 10; // Taille du repére
+int size = 20; // Taille du repére
 
 void init_scene();
 void render_scene();
@@ -130,7 +130,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 }
 
 void exercice1() {
-	vector<Face> faces = parseFile("res/test.ttl");
+	vector<Face> faces = parseFile("res/bunny.off");
 	Face::drawSet(faces);
 }
 

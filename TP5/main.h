@@ -18,7 +18,7 @@ void drawVoxels(vector<Voxel> tab) {
 void goAlgo(std::function<int(Voxel)> f, Voxel v, float resolution, vector<Voxel>* voxels) {
 	if (f(v) == 1) { // IS ON
 		if (resolution == 1) {
-			v.flag = 3;
+			v.flag = 2;
 			voxels->push_back(v);
 		} else {
 			Voxel* tab = v.decoupe();
@@ -28,9 +28,9 @@ void goAlgo(std::function<int(Voxel)> f, Voxel v, float resolution, vector<Voxel
 		}
 	} else {
 		if (f(v) == 2) // IS IN
-			v.flag = 1;
-		else
 			v.flag = 0;
+		else
+			v.flag = 1;
 		voxels->push_back(v);
 	}
 }

@@ -23,9 +23,11 @@ public:
 	}
 
 	void draw() {
+		glBegin(GL_LINES);
 		for (auto p : points) {
-			// TODO
+			drawPoint(&p);
 		}
+		glEnd();
 	}
 
 	static void drawSet(vector<Face> faces) {
@@ -46,32 +48,39 @@ vector<Face> parseFile(const char* path) {
 		exit(EXIT_FAILURE);
 	}
 	else {
+		int out;
 		int nbrSommets, nbrFaces;
-		fscanf(f_maillage, "%d %d", &nbrSommets, &nbrFaces);
+		fscanf(f_maillage, "OFF");
+		fscanf(f_maillage, "%d %d %d", &nbrSommets, &nbrFaces, &out);
+		printf("nbrSommets=%d, nbrFaces=%d\n", nbrSommets, nbrFaces);
 
+		cout << "Chargement des sommets..." << endl;
 		// Chargement des sommets
 		Point* points = new Point[nbrSommets];
 		for (int i = 0; i < nbrSommets; ++i) {
 			float x,y,z;
 			fscanf(f_maillage, "%f %f %f", &x, &y, &z);
-			Point p(x,y,z);
+			int scalar = 100;
+			Point p(x*scalar,y*scalar,z*scalar);
 			points[i].set(p);
 		}
 
+		cout << "Chargement des faces..." << endl;
+
 		// Chargement des sommets
-		for (int i = 0; i < nbrFaces; ++i) {
-			char buffer[250];
-			int nbrPoints;
-			fscanf(f_maillage, "%d %s", &nbrPoints, buffer);
+		char buffer[250];
+		  while (fgets (buffer, sizeof(buffer), f_maillage)) {
+		  	//printf("line = %s\n", buffer);
 			Face f;
-			for (int j = 0; j < nbrPoints; ++j) {
-				int pt = 0; // TODO
+		    int nbrPoints = atoi(strtok(buffer, " "));
+		    for (int j = 0; j < nbrPoints; ++j) {
+				int pt = atoi(strtok(NULL, " ")); // TODO
 				f.addPoint(points[pt]);
 			}
 			faces.push_back(f);
-		}
+		  }
 
-		delete(points);
+		  cout << "Faces chargées ! " << endl;
 
 	}
 

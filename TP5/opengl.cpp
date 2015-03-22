@@ -190,9 +190,9 @@ void cilynder() {
 void render_scene() {
 	cout << "==================  RENDER  =======================" << endl;
 	//sphere();
-	//cilynder();
+	cilynder();
 	//union2();
 	//intersection();
-	minus2();
+	//minus2();
 }
 

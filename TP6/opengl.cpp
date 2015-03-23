@@ -14,7 +14,6 @@
 
 #define KEY_ESC 27
 
-float size = 10; // Taille du repére
 
 void init_scene();
 void render_scene();
@@ -88,20 +87,18 @@ void init_scene() {
 GLvoid window_display() {
 	cout << "window_display()" << endl;
 	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_MODELVIEW);    
+	glMatrixMode(GL_PROJECTION);    
 	glLoadIdentity();
-	gluLookAt(eyeX,eyeY,eyeZ, 0,0,0, upX,upY,upZ);
+	//gluLookAt(eyeX,eyeY,eyeZ, 0,0,0, upX,upY,upZ);
+	//glMatrixMode(GL_MODELVIEW);    
 	render_scene();
-	glutSwapBuffers();
+	//glutSwapBuffers();
 	glFlush();
 }
 
 GLvoid window_reshape(GLsizei width, GLsizei height) {  
 	cout << "window_reshape()" << endl;
 	glViewport(0, 0, width, height);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glMatrixMode(GL_MODELVIEW);    
 }
 
 GLvoid window_key(unsigned char key, int x, int y) 
@@ -131,13 +128,17 @@ GLvoid window_key(unsigned char key, int x, int y)
 }
 
 void exercice1() {
+
 	vector<Face> faces = parseFile("res/bunny.off");
 	Point center = Face::getCenter(faces);
 	cout << "center = " << center << endl;
-	Vector v(0,0,0);
+	Vector v(center);
+	Vector minus(-1, -1, -1);
+	v.multiply(&minus);
+	cout << "v = " << v << endl;
 
 	float size = Face::getBestSizeRepere(faces, v);
-	size *= 5.0f;
+	size *= 1.0f;
 	cout << "size = " << size << endl;
 
 	Point pMin =  Face::getMoreNegative(faces);
@@ -151,7 +152,6 @@ void exercice1() {
 	//gluLookAt(0,0,0, 0.5f,0,0, 0,1,0);
 
 	Face::drawSet(faces);
-
 
 }
 

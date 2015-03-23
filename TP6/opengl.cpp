@@ -14,7 +14,7 @@
 
 #define KEY_ESC 27
 
-int size = 20; // Taille du repére
+float size = 10; // Taille du repére
 
 void init_scene();
 void render_scene();
@@ -26,8 +26,8 @@ GLvoid window_key(unsigned char key, int x, int y);
 GLint winWidth=WIDTH, winHeight=HEIGHT;
 GLfloat eyeX=0.0, eyeY=0.0, eyeZ=2.0;
 GLfloat theta=270.0, phi=180.0;
-GLfloat upX=10.0, upY=10.0, upZ=10.0;
-GLfloat r=2.0;
+GLfloat upX=0.0, upY=1.0, upZ=0.0;
+GLfloat r=1;
 
 void eyePosition( void ) {
 	eyeX = r * sin(theta*0.0174532) * sin(phi*0.0174532);
@@ -46,13 +46,13 @@ void eyePosition( void ) {
 }
 
 void onMouseMove(int x, int y) { 
-// Mouse point to angle conversion
-   theta = (360.0/(double)winHeight)*(double)y*1.0; //3.0 rotations possible
-   phi = (360.0/(double)winWidth)*(double)x*1.0; 
-// Restrict the angles within 0~360 deg (optional)
-   if(theta > 360)theta = fmod((double)theta,360.0);
-   if(phi > 360)phi = fmod((double)phi,360.0);
-   eyePosition();
+	// Mouse point to angle conversion
+	theta = (360.0/(double)winHeight)*(double)y*1.0; //3.0 rotations possible
+	phi = (360.0/(double)winWidth)*(double)x*1.0; 
+	// Restrict the angles within 0~360 deg (optional)
+	if(theta > 360) theta = fmod((double)theta,360.0);
+	if(phi > 360) phi = fmod((double)phi,360.0);
+	eyePosition();
 }
 
 int main(int argc, char **argv)  {  
@@ -86,21 +86,22 @@ void init_scene() {
 }
 
 GLvoid window_display() {
+	cout << "window_display()" << endl;
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);    
 	glLoadIdentity();
-	gluLookAt(eyeX,eyeY,eyeZ,0,0,0,upX, upY, upZ);
+	gluLookAt(eyeX,eyeY,eyeZ, 0,0,0, upX,upY,upZ);
 	render_scene();
 	glutSwapBuffers();
 	glFlush();
 }
 
 GLvoid window_reshape(GLsizei width, GLsizei height) {  
+	cout << "window_reshape()" << endl;
 	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(-size, size, -size, size, -size*100, size*100);
-	glMatrixMode(GL_MODELVIEW);
+	glMatrixMode(GL_MODELVIEW);    
 }
 
 GLvoid window_key(unsigned char key, int x, int y) 
@@ -131,7 +132,27 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 void exercice1() {
 	vector<Face> faces = parseFile("res/bunny.off");
+	Point center = Face::getCenter(faces);
+	cout << "center = " << center << endl;
+	Vector v(0,0,0);
+
+	float size = Face::getBestSizeRepere(faces, v);
+	size *= 5.0f;
+	cout << "size = " << size << endl;
+
+	Point pMin =  Face::getMoreNegative(faces);
+	Point pMax =  Face::getMorePositive(faces);
+
+	cout << "pMin=" << pMin << endl;
+	cout << "pMax=" << pMax << endl;
+
+	//glOrtho(pMin.getX(), pMax.getX(), pMin.getY(), pMax.getY(), pMin.getZ(), pMax.getZ());
+	glOrtho(-size, size, -size, size, -size, size);
+	//gluLookAt(0,0,0, 0.5f,0,0, 0,1,0);
+
 	Face::drawSet(faces);
+
+
 }
 
 

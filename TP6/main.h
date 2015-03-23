@@ -23,9 +23,12 @@ public:
 	}
 
 	void draw() {
-		glBegin(GL_LINES);
+		glBegin(GL_LINE_STRIP);
 		for (auto p : points) {
 			drawPoint(&p);
+		}
+		if (points.size() > 0) {
+			drawPoint(&points[0]);
 		}
 		glEnd();
 	}
@@ -34,6 +37,78 @@ public:
 		for (auto p : faces) {
 			p.draw();
 		}
+	}
+
+	static float getBestSizeRepere(vector<Face> faces, Vector center) {
+		float size = 0;
+		for (auto f : faces) {
+			for (auto p : f.points) {
+				Point x = (p);
+				x.add(&center);
+				
+				if (x.getX() < -size)
+					size = -p.getX();
+				if (x.getY() < -size)
+					size = -p.getY();
+				if (x.getY() < -size)
+					size = -p.getY();
+
+				if (x.getX() > size)
+					size = p.getX();
+				if (x.getY() > size)
+					size = p.getY();
+				if (x.getZ() > size)
+					size = p.getZ();
+			
+			}
+		}
+		return size;
+	}
+
+	static Point getCenter(vector<Face> faces) {
+		Point pMin = getMoreNegative(faces);
+		Point pMax = getMorePositive(faces);
+		Point p(
+			(pMin.getX() + pMax.getX()) / 2,
+			(pMin.getY() + pMax.getY()) / 2,
+			(pMin.getZ() + pMax.getZ()) / 2);
+		return p;
+	}
+
+	static Point getMoreNegative(vector<Face> faces) {
+		Point* out = NULL;
+		for (auto f : faces) {
+			for (auto p : f.points) {
+				if (out == NULL) {
+					out = new Point(p);
+				}
+				if (p.getX() < out->getX())
+					out->setX(p.getX());
+				if (p.getY() < out->getY())
+					out->setY(p.getY());
+				if (p.getZ() < out->getZ())
+					out->setZ(p.getZ());
+			}
+		}
+		return *out;
+	}
+
+	static Point getMorePositive(vector<Face> faces) {
+		Point* out = NULL;
+		for (auto f : faces) {
+			for (auto p : f.points) {
+				if (out == NULL) {
+					out = new Point(p);
+				}
+				if (p.getX() > out->getX())
+					out->setX(p.getX());
+				if (p.getY() > out->getY())
+					out->setY(p.getY());
+				if (p.getZ() > out->getZ())
+					out->setZ(p.getZ());
+			}
+		}
+		return *out;
 	}
 
 };
@@ -60,7 +135,7 @@ vector<Face> parseFile(const char* path) {
 		for (int i = 0; i < nbrSommets; ++i) {
 			float x,y,z;
 			fscanf(f_maillage, "%f %f %f", &x, &y, &z);
-			int scalar = 100;
+			int scalar = 1;
 			Point p(x*scalar,y*scalar,z*scalar);
 			points[i].set(p);
 		}

@@ -2,7 +2,6 @@
 #include <stdlib.h>    
 #include <math.h>
 #include "../lib/Include.h"
-#include "main.h"
 
 #define WIDTH  480
 #define HEIGHT 480
@@ -119,7 +118,7 @@ Maillage maillage;
 void exercice1() {
 
 	if (r == NULL) {
-		maillage = parseFile("res/bunny.off");
+		maillage = parseFile("../resssources/bunny.off");
 		r = new Repere(maillage);
 		cout << "center = " << r->center << endl;
 		cout << "size = " << r->size << endl;
@@ -131,18 +130,23 @@ void exercice1() {
 		eyeX,eyeY,eyeZ,
 		r->center.getX(),r->center.getY(),r->center.getZ(),
 		0,1,0);
-
 	
+	/*
 	glColor3f(0.5,0,0.5);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
 	glEnableClientState (GL_VERTEX_ARRAY);
 	glEnableClientState (GL_NORMAL_ARRAY);
+
 	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
 	glNormalPointer (GL_FLOAT, 0, maillage.getTabNormales());
+
 	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
 	glDisableClientState(GL_VERTEX_ARRAY);
+	*/
 
 	glColor3f(0,0.5,0.5);
-	//maillage.draw();
+	maillage.draw();
 
 }
 

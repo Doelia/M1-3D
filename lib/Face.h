@@ -28,8 +28,8 @@ public:
 
 	void draw() {
 
-		glBegin(GL_POLYGON);
-		//glBegin(GL_LINE_STRIP);
+		//glBegin(GL_POLYGON);
+		glBegin(GL_LINE_STRIP);
 		for (auto p : points) {
 			drawPoint(&p);
 		}

@@ -118,7 +118,7 @@ Maillage maillage;
 void exercice1() {
 
 	if (r == NULL) {
-		maillage = parseFile("../resssources/bunny.off");
+		maillage = parseFile("../ressources/max.off");
 		r = new Repere(maillage);
 		cout << "center = " << r->center << endl;
 		cout << "size = " << r->size << endl;
@@ -131,7 +131,6 @@ void exercice1() {
 		r->center.getX(),r->center.getY(),r->center.getZ(),
 		0,1,0);
 	
-	/*
 	glColor3f(0.5,0,0.5);
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -141,9 +140,8 @@ void exercice1() {
 	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
 	glNormalPointer (GL_FLOAT, 0, maillage.getTabNormales());
 
-	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
+	//glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
 	glDisableClientState(GL_VERTEX_ARRAY);
-	*/
 
 	glColor3f(0,0.5,0.5);
 	maillage.draw();

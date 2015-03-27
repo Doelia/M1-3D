@@ -130,7 +130,7 @@ vector<Face> faces;
 void exercice1() {
 
 	if (center == NULL) {
-		faces = parseFile("res/test.off");
+		faces = parseFile("res/bunny.off");
 		center = new Point(Face::getCenter(faces));
 		cout << "center = " << *center << endl;
 		Vector v(*center);
@@ -139,7 +139,7 @@ void exercice1() {
 		cout << "v = " << v << endl;
 
 		sizeRepere = Face::getBestSizeRepere(faces, v);
-		sizeRepere *= 1.3f;
+		sizeRepere *= 2.0f;
 		cout << "sizeRepere = " << sizeRepere << endl;
 	}
 

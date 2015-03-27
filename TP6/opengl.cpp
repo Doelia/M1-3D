@@ -120,7 +120,7 @@ Maillage maillage;
 void exercice1() {
 
 	if (center == NULL) {
-		maillage = parseFile("res/triceratops.off");
+		maillage = parseFile("res/bunny.off");
 		center = new Point(maillage.getCenter());
 		cout << "center = " << *center << endl;
 		Vector v(*center);
@@ -138,7 +138,26 @@ void exercice1() {
 		center->getX(),center->getY(),center->getZ(),
 		0,1,0);
 
-	maillage.draw();
+	//maillage.draw();
+
+	
+	GLfloat* tab = maillage.getTabPoints();
+	for (int i = 0; i < maillage.points.size()*3; ++i) {
+		cout << tab[i] << endl;
+	}
+	/*
+	GLubyte* tab2 = maillage.getTabIndices();
+	for (int i = 0; i < maillage.faces.size()*maillage.nbrPtsPerFace; ++i) {
+		cout << tab2[i] << endl;
+	}
+	*/
+
+	glEnableClientState (GL_VERTEX_ARRAY);
+	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
+	cout << maillage.getNbrIndices() << " indices" << endl;
+	cout << maillage.points.size()*3 << " points" << endl;
+	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
+	glDisableClientState(GL_VERTEX_ARRAY);
 
 }
 

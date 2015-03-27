@@ -13,6 +13,7 @@ class Face {
 public:
 
 	vector<Point> points;
+	vector<int> indices;
 
 	Face() {
 
@@ -39,9 +40,10 @@ public:
 
 class Maillage {
 public:
+	int nbrFaces = 0;
 	vector<Face> faces;
-
-	
+	vector<Point> points;
+	int nbrPtsPerFace = 0;
 
 	void addFace(Face f) {
 		faces.push_back(f);
@@ -118,6 +120,32 @@ public:
 		}
 	}
 
+	GLfloat* getTabPoints() {
+		GLfloat* tab = new GLfloat[points.size()*3];
+		int i = 0;
+		for (Point p : points) {
+			tab[i++] = p.getX();
+			tab[i++] = p.getY();
+			tab[i++] = p.getZ();
+		}
+		return tab;
+	}
+
+	int getNbrIndices() {
+		return nbrFaces*nbrPtsPerFace;
+	}
+
+	int* getTabIndices() {
+		int* tab = new int[getNbrIndices()];
+		int i = 0;
+		for (Face f : faces) {
+			for (int indice : f.indices) {
+				tab[i++] = indice;
+			}
+		}
+		return tab;
+	}
+
 };
 
 Maillage parseFile(const char* path) {
@@ -131,10 +159,10 @@ Maillage parseFile(const char* path) {
 	}
 	else {
 		int out;
-		int nbrSommets, nbrFaces;
+		int nbrSommets;
 		fscanf(f_maillage, "OFF");
-		fscanf(f_maillage, "%d %d %d", &nbrSommets, &nbrFaces, &out);
-		printf("nbrSommets=%d, nbrFaces=%d\n", nbrSommets, nbrFaces);
+		fscanf(f_maillage, "%d %d %d", &nbrSommets, &maillage.nbrFaces, &out);
+		printf("nbrSommets=%d, nbrFaces=%d\n", nbrSommets, maillage.nbrFaces);
 
 		cout << "Chargement des sommets..." << endl;
 		// Chargement des sommets
@@ -145,6 +173,7 @@ Maillage parseFile(const char* path) {
 			int scalar = 1;
 			Point p(x*scalar,y*scalar,z*scalar);
 			points[i].set(p);
+			maillage.points.push_back(p);
 		}
 
 		cout << "Chargement des faces..." << endl;
@@ -155,8 +184,10 @@ Maillage parseFile(const char* path) {
 		  	//printf("line = %s\n", buffer);
 			Face f;
 		    int nbrPoints = atoi(strtok(buffer, " "));
+		    maillage.nbrPtsPerFace = nbrPoints;
 		    for (int j = 0; j < nbrPoints; ++j) {
-				int pt = atoi(strtok(NULL, " ")); // TODO
+				int pt = atoi(strtok(NULL, " "));
+				f.indices.push_back(pt);
 				f.addPoint(points[pt]);
 			}
 			maillage.addFace(f);

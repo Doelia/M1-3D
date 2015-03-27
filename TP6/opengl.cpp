@@ -126,10 +126,8 @@ void exercice1() {
 		Vector v(*center);
 		Vector minus(-1, -1, -1);
 		v.multiply(&minus);
-		cout << "v = " << v << endl;
 		sizeRepere = maillage.getBestSizeRepere(v);
 		sizeRepere *= 2.0f;
-		cout << "sizeRepere = " << sizeRepere << endl;
 	}
 
 	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
@@ -138,26 +136,15 @@ void exercice1() {
 		center->getX(),center->getY(),center->getZ(),
 		0,1,0);
 
-	//maillage.draw();
-
 	
-	GLfloat* tab = maillage.getTabPoints();
-	for (int i = 0; i < maillage.points.size()*3; ++i) {
-		cout << tab[i] << endl;
-	}
-	/*
-	GLubyte* tab2 = maillage.getTabIndices();
-	for (int i = 0; i < maillage.faces.size()*maillage.nbrPtsPerFace; ++i) {
-		cout << tab2[i] << endl;
-	}
-	*/
-
+	glColor3f(0,0,0.5);
 	glEnableClientState (GL_VERTEX_ARRAY);
 	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
-	cout << maillage.getNbrIndices() << " indices" << endl;
-	cout << maillage.points.size()*3 << " points" << endl;
 	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
 	glDisableClientState(GL_VERTEX_ARRAY);
+
+	glColor3f(0,0.5,0.5);
+	maillage.draw();
 
 }
 

@@ -27,14 +27,13 @@ GLfloat eyeX=0.0, eyeY=0.0, eyeZ=2.0;
 // Position sourie
 GLfloat theta=270.0, phi=180.0;
 
-Point* center = NULL;
-float sizeRepere;
+Repere* r;
 
 void eyePosition( void ) {
-	if (center != NULL) {
-		eyeX = center->getX() + sizeRepere/2 * sin(theta*0.0174532) * sin(phi*0.0174532);
-		eyeY = center->getY() + sizeRepere/2 * cos(theta*0.0174532);
-		eyeZ = center->getZ() + sizeRepere/2 * sin(theta*0.0174532) * cos(phi*0.0174532);
+	if (r != NULL) {
+		eyeX = r->center.getX() + r->size/2 * sin(theta*0.0174532) * sin(phi*0.0174532);
+		eyeY = r->center.getY() + r->size/2 * cos(theta*0.0174532);
+		eyeZ = r->center.getZ() + r->size/2 * sin(theta*0.0174532) * cos(phi*0.0174532);
 		glutPostRedisplay();
 	}
 }
@@ -119,32 +118,31 @@ Maillage maillage;
 
 void exercice1() {
 
-	if (center == NULL) {
+	if (r == NULL) {
 		maillage = parseFile("res/bunny.off");
-		center = new Point(maillage.getCenter());
-		cout << "center = " << *center << endl;
-		Vector v(*center);
-		Vector minus(-1, -1, -1);
-		v.multiply(&minus);
-		sizeRepere = maillage.getBestSizeRepere(v);
-		sizeRepere *= 2.0f;
+		r = new Repere(maillage);
+		cout << "center = " << r->center << endl;
+		cout << "size = " << r->size << endl;
 	}
 
+	float sizeRepere = r->size;
 	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
 	gluLookAt(
 		eyeX,eyeY,eyeZ,
-		center->getX(),center->getY(),center->getZ(),
+		r->center.getX(),r->center.getY(),r->center.getZ(),
 		0,1,0);
 
 	
-	glColor3f(0,0,0.5);
+	glColor3f(0.5,0,0.5);
 	glEnableClientState (GL_VERTEX_ARRAY);
+	glEnableClientState (GL_NORMAL_ARRAY);
 	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
+	glNormalPointer (GL_FLOAT, 0, maillage.getTabNormales());
 	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
 	glDisableClientState(GL_VERTEX_ARRAY);
 
 	glColor3f(0,0.5,0.5);
-	maillage.draw();
+	//maillage.draw();
 
 }
 

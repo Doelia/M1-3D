@@ -35,8 +35,17 @@ public:
 		glEnd();
 	}
 
+	Vector getNormale() {
+		Vector v1(&(points[0]), &(points[1]));
+		Vector v2(&(points[1]), &(points[2]));
+		Vector* produit = v1.getProduitVectoriel(&v2);
+		produit->normalize();
+		return *produit;
+	}
+
 
 };
+
 
 class Maillage {
 public:
@@ -49,76 +58,13 @@ public:
 		faces.push_back(f);
 	}
 
-	Point getCenter() {
-		Point pMin = getMoreNegative();
-		Point pMax = getMorePositive();
-		Point p(
-			(pMin.getX() + pMax.getX()) / 2,
-			(pMin.getY() + pMax.getY()) / 2,
-			(pMin.getZ() + pMax.getZ()) / 2);
-		return p;
-	}
-
-	Point getMoreNegative() {
-		Point* out = NULL;
-		for (auto f : faces) {
-			for (auto p : f.points) {
-				if (out == NULL) {
-					out = new Point(p);
-				}
-				if (p.getX() < out->getX())
-					out->setX(p.getX());
-				if (p.getY() < out->getY())
-					out->setY(p.getY());
-				if (p.getZ() < out->getZ())
-					out->setZ(p.getZ());
-			}
-		}
-		return *out;
-	}
-
-	Point getMorePositive() {
-		Point* out = NULL;
-		for (auto f : faces) {
-			for (auto p : f.points) {
-				if (out == NULL) {
-					out = new Point(p);
-				}
-				if (p.getX() > out->getX())
-					out->setX(p.getX());
-				if (p.getY() > out->getY())
-					out->setY(p.getY());
-				if (p.getZ() > out->getZ())
-					out->setZ(p.getZ());
-			}
-		}
-		return *out;
-	}
-
-	float getBestSizeRepere(Vector center) {
-		float size = 0;
-		for (auto f : faces) {
-			for (auto p : f.points) {
-				Point x = (p);
-				x.add(&center);
-
-				if (fabs(x.getX()) > size)
-					size = fabs(x.getX());
-				if (fabs(x.getY()) > size)
-					size = fabs(x.getY());
-				if (fabs(x.getZ()) > size)
-					size = fabs(x.getZ());
-			
-			}
-		}
-		return size;
-	}
-
 	void draw() {
 		for (auto p : faces) {
 			p.draw();
 		}
 	}
+
+	// AFFICHAGE DYNAMIQUE OPENGL
 
 	GLfloat* getTabPoints() {
 		GLfloat* tab = new GLfloat[points.size()*3];
@@ -146,7 +92,110 @@ public:
 		return tab;
 	}
 
+	float* getTabNormales() {
+		cout << "chargement des normales..." << endl;
+		float* tab = new float[nbrFaces*3];
+		int i = 0;
+		for (Face f : faces) {
+			Vector v = f.getNormale();
+			//cout << "v = " << v << endl;
+			tab[i++] = v.getX();
+			tab[i++] = v.getY();
+			tab[i++] = v.getZ();
+		}
+		return tab;
+	}
+
 };
+
+class Repere {
+
+	Maillage m;
+
+public:
+
+	Point center;
+	float size;
+
+	Repere(Maillage m) {
+		this->m = m;
+		this->center = getCenter();
+		Vector v(center);
+		Vector minus(-1, -1, -1);
+		v.multiply(&minus);
+		this->size = getBestSizeRepere(v);
+		this->size = this->size * 2.0f;
+	}
+
+private:
+
+	Point getCenter() {
+		Point pMin = getMoreNegative();
+		Point pMax = getMorePositive();
+		Point p(
+			(pMin.getX() + pMax.getX()) / 2,
+			(pMin.getY() + pMax.getY()) / 2,
+			(pMin.getZ() + pMax.getZ()) / 2);
+		return p;
+	}
+
+	Point getMoreNegative() {
+		Point* out = NULL;
+		for (Face f : m.faces) {
+			for (Point p : f.points) {
+				if (out == NULL) {
+					out = new Point(p);
+				}
+				if (p.getX() < out->getX())
+					out->setX(p.getX());
+				if (p.getY() < out->getY())
+					out->setY(p.getY());
+				if (p.getZ() < out->getZ())
+					out->setZ(p.getZ());
+			}
+		}
+		return *out;
+	}
+
+	Point getMorePositive() {
+		Point* out = NULL;
+		for (Face f : m.faces) {
+			for (Point p : f.points) {
+				if (out == NULL) {
+					out = new Point(p);
+				}
+				if (p.getX() > out->getX())
+					out->setX(p.getX());
+				if (p.getY() > out->getY())
+					out->setY(p.getY());
+				if (p.getZ() > out->getZ())
+					out->setZ(p.getZ());
+			}
+		}
+		return *out;
+	}
+
+	float getBestSizeRepere(Vector center) {
+		float size = 0;
+		for (Face f : m.faces) {
+			for (Point p : f.points) {
+				Point x = (p);
+				x.add(&center);
+
+				if (fabs(x.getX()) > size)
+					size = fabs(x.getX());
+				if (fabs(x.getY()) > size)
+					size = fabs(x.getY());
+				if (fabs(x.getZ()) > size)
+					size = fabs(x.getZ());
+			
+			}
+		}
+		return size;
+	}
+
+};
+
 
 Maillage parseFile(const char* path) {
 
@@ -180,8 +229,9 @@ Maillage parseFile(const char* path) {
 
 		// Chargement des sommets
 		char buffer[250];
+		fgets (buffer, sizeof(buffer), f_maillage);
 		  while (fgets (buffer, sizeof(buffer), f_maillage)) {
-		  	//printf("line = %s\n", buffer);
+		  	printf("line = %s\n", buffer);
 			Face f;
 		    int nbrPoints = atoi(strtok(buffer, " "));
 		    maillage.nbrPtsPerFace = nbrPoints;

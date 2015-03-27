@@ -24,31 +24,26 @@ GLvoid window_key(unsigned char key, int x, int y);
 
 GLint winWidth=WIDTH, winHeight=HEIGHT;
 GLfloat eyeX=0.0, eyeY=0.0, eyeZ=2.0;
+
+// Position sourie
 GLfloat theta=270.0, phi=180.0;
-GLfloat upX=0.0, upY=1.0, upZ=0.0;
-GLfloat r=1;
+
+
+Point* center = NULL;
+float sizeRepere;
 
 void eyePosition( void ) {
-	eyeX = r * sin(theta*0.0174532) * sin(phi*0.0174532);
-	eyeY = r * cos(theta*0.0174532);
-	eyeZ = r * sin(theta*0.0174532) * cos(phi*0.0174532);
-	GLfloat dt=1.0;
-	GLfloat eyeXtemp = r * sin(theta*0.0174532-dt) * sin(phi*0.0174532);
-	GLfloat eyeYtemp = r * cos(theta*0.0174532-dt);
-	GLfloat eyeZtemp = r * sin(theta*0.0174532-dt) * cos(phi*0.0174532); 
-
-	upX=eyeXtemp-eyeX;
-	upY=eyeYtemp-eyeY;
-	upZ=eyeZtemp-eyeZ;
-
-	glutPostRedisplay();
+	if (center != NULL) {
+		eyeX = center->getX() + sizeRepere/2 * sin(theta*0.0174532) * sin(phi*0.0174532);
+		eyeY = center->getY() + sizeRepere/2 * cos(theta*0.0174532);
+		eyeZ = center->getZ() + sizeRepere/2 * sin(theta*0.0174532) * cos(phi*0.0174532);
+		glutPostRedisplay();
+	}
 }
 
 void onMouseMove(int x, int y) { 
-	// Mouse point to angle conversion
 	theta = (360.0/(double)winHeight)*(double)y*1.0; //3.0 rotations possible
 	phi = (360.0/(double)winWidth)*(double)x*1.0; 
-	// Restrict the angles within 0~360 deg (optional)
 	if(theta > 360) theta = fmod((double)theta,360.0);
 	if(phi > 360) phi = fmod((double)phi,360.0);
 	eyePosition();
@@ -90,6 +85,9 @@ GLvoid window_display() {
 	glMatrixMode(GL_PROJECTION);    
 	glLoadIdentity();
 	//gluLookAt(eyeX,eyeY,eyeZ, 0,0,0, upX,upY,upZ);
+
+	
+
 	//glMatrixMode(GL_MODELVIEW);    
 	render_scene();
 	//glutSwapBuffers();
@@ -127,29 +125,29 @@ GLvoid window_key(unsigned char key, int x, int y)
 	render_scene();
 }
 
+vector<Face> faces;
+
 void exercice1() {
 
-	vector<Face> faces = parseFile("res/buddha.off");
-	Point center = Face::getCenter(faces);
-	cout << "center = " << center << endl;
-	Vector v(center);
-	Vector minus(-1, -1, -1);
-	v.multiply(&minus);
-	cout << "v = " << v << endl;
+	if (center == NULL) {
+		faces = parseFile("res/test.off");
+		center = new Point(Face::getCenter(faces));
+		cout << "center = " << *center << endl;
+		Vector v(*center);
+		Vector minus(-1, -1, -1);
+		v.multiply(&minus);
+		cout << "v = " << v << endl;
 
-	float size = Face::getBestSizeRepere(faces, v);
-	size *= 1.3f;
-	cout << "size = " << size << endl;
+		sizeRepere = Face::getBestSizeRepere(faces, v);
+		sizeRepere *= 1.3f;
+		cout << "sizeRepere = " << sizeRepere << endl;
+	}
 
-	/*Point pMin =  Face::getMoreNegative(faces);
-	Point pMax =  Face::getMorePositive(faces);
-
-	cout << "pMin=" << pMin << endl;
-	cout << "pMax=" << pMax << endl;*/
-
-	//glOrtho(pMin.getX(), pMax.getX(), pMin.getY(), pMax.getY(), pMin.getZ(), pMax.getZ());
-	glOrtho(-size, size, -size, size, -size, size);
-	gluLookAt(center.getX(),center.getY(),center.getZ()+(size/2), center.getX(),center.getY(),center.getZ(), 0,1,0);
+	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
+	gluLookAt(
+		eyeX,eyeY,eyeZ,
+		center->getX(),center->getY(),center->getZ(),
+		0,1,0);
 
 	Face::drawSet(faces);
 

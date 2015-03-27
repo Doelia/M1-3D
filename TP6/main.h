@@ -45,20 +45,13 @@ public:
 			for (auto p : f.points) {
 				Point x = (p);
 				x.add(&center);
-				
-				if (x.getX() < -size)
-					size = -p.getX();
-				if (x.getY() < -size)
-					size = -p.getY();
-				if (x.getY() < -size)
-					size = -p.getY();
 
-				if (x.getX() > size)
-					size = p.getX();
-				if (x.getY() > size)
-					size = p.getY();
-				if (x.getZ() > size)
-					size = p.getZ();
+				if (fabs(x.getX()) > size)
+					size = fabs(x.getX());
+				if (fabs(x.getY()) > size)
+					size = fabs(x.getY());
+				if (fabs(x.getZ()) > size)
+					size = fabs(x.getZ());
 			
 			}
 		}

@@ -129,7 +129,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 
 void exercice1() {
 
-	vector<Face> faces = parseFile("res/bunny.off");
+	vector<Face> faces = parseFile("res/buddha.off");
 	Point center = Face::getCenter(faces);
 	cout << "center = " << center << endl;
 	Vector v(center);
@@ -138,18 +138,18 @@ void exercice1() {
 	cout << "v = " << v << endl;
 
 	float size = Face::getBestSizeRepere(faces, v);
-	size *= 1.0f;
+	size *= 1.3f;
 	cout << "size = " << size << endl;
 
-	Point pMin =  Face::getMoreNegative(faces);
+	/*Point pMin =  Face::getMoreNegative(faces);
 	Point pMax =  Face::getMorePositive(faces);
 
 	cout << "pMin=" << pMin << endl;
-	cout << "pMax=" << pMax << endl;
+	cout << "pMax=" << pMax << endl;*/
 
 	//glOrtho(pMin.getX(), pMax.getX(), pMin.getY(), pMax.getY(), pMin.getZ(), pMax.getZ());
 	glOrtho(-size, size, -size, size, -size, size);
-	//gluLookAt(0,0,0, 0.5f,0,0, 0,1,0);
+	gluLookAt(center.getX(),center.getY(),center.getZ()+(size/2), center.getX(),center.getY(),center.getZ(), 0,1,0);
 
 	Face::drawSet(faces);
 

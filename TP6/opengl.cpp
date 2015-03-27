@@ -14,7 +14,6 @@
 
 #define KEY_ESC 27
 
-
 void init_scene();
 void render_scene();
 GLvoid initGL();
@@ -27,7 +26,6 @@ GLfloat eyeX=0.0, eyeY=0.0, eyeZ=2.0;
 
 // Position sourie
 GLfloat theta=270.0, phi=180.0;
-
 
 Point* center = NULL;
 float sizeRepere;
@@ -84,13 +82,7 @@ GLvoid window_display() {
 	glClear(GL_COLOR_BUFFER_BIT);
 	glMatrixMode(GL_PROJECTION);    
 	glLoadIdentity();
-	//gluLookAt(eyeX,eyeY,eyeZ, 0,0,0, upX,upY,upZ);
-
-	
-
-	//glMatrixMode(GL_MODELVIEW);    
 	render_scene();
-	//glutSwapBuffers();
 	glFlush();
 }
 
@@ -102,43 +94,40 @@ GLvoid window_reshape(GLsizei width, GLsizei height) {
 GLvoid window_key(unsigned char key, int x, int y) 
 {  
 	switch (key) {    
-	case KEY_ESC:  
-		exit(1);                    
-		break; 
-	case 43: break; // +
-	case 45: break; // --
-	case 97: // a
-	case 122: // z
-	case 101: // e
-	case 114: // r
-	case 111: // o (haut)
-	case 108: // l (bas)
-	case 107: // k (gauche)
-	case 109: // k (droite)
-	case 113: // q
-	case 115: // s 
-	default:
-	printf ("La touche %d n´est pas active.\n", key);
-	break;
-}     
-
+		case KEY_ESC:  
+		exit(1); break; 
+		case 43: break; // +
+		case 45: break; // --
+		case 97: // a
+		case 122: // z
+		case 101: // e
+		case 114: // r
+		case 111: // o (haut)
+		case 108: // l (bas)
+		case 107: // k (gauche)
+		case 109: // k (droite)
+		case 113: // q
+		case 115: // s 
+		default:
+		printf ("La touche %d n´est pas active.\n", key);
+		break;
+	}     
 	render_scene();
 }
 
-vector<Face> faces;
+Maillage maillage;
 
 void exercice1() {
 
 	if (center == NULL) {
-		faces = parseFile("res/bunny.off");
-		center = new Point(Face::getCenter(faces));
+		maillage = parseFile("res/triceratops.off");
+		center = new Point(maillage.getCenter());
 		cout << "center = " << *center << endl;
 		Vector v(*center);
 		Vector minus(-1, -1, -1);
 		v.multiply(&minus);
 		cout << "v = " << v << endl;
-
-		sizeRepere = Face::getBestSizeRepere(faces, v);
+		sizeRepere = maillage.getBestSizeRepere(v);
 		sizeRepere *= 2.0f;
 		cout << "sizeRepere = " << sizeRepere << endl;
 	}
@@ -149,7 +138,7 @@ void exercice1() {
 		center->getX(),center->getY(),center->getZ(),
 		0,1,0);
 
-	Face::drawSet(faces);
+	maillage.draw();
 
 }
 

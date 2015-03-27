@@ -34,13 +34,66 @@ public:
 		glEnd();
 	}
 
-	static void drawSet(vector<Face> faces) {
-		for (auto p : faces) {
-			p.draw();
-		}
+
+};
+
+class Maillage {
+public:
+	vector<Face> faces;
+
+	
+
+	void addFace(Face f) {
+		faces.push_back(f);
 	}
 
-	static float getBestSizeRepere(vector<Face> faces, Vector center) {
+	Point getCenter() {
+		Point pMin = getMoreNegative();
+		Point pMax = getMorePositive();
+		Point p(
+			(pMin.getX() + pMax.getX()) / 2,
+			(pMin.getY() + pMax.getY()) / 2,
+			(pMin.getZ() + pMax.getZ()) / 2);
+		return p;
+	}
+
+	Point getMoreNegative() {
+		Point* out = NULL;
+		for (auto f : faces) {
+			for (auto p : f.points) {
+				if (out == NULL) {
+					out = new Point(p);
+				}
+				if (p.getX() < out->getX())
+					out->setX(p.getX());
+				if (p.getY() < out->getY())
+					out->setY(p.getY());
+				if (p.getZ() < out->getZ())
+					out->setZ(p.getZ());
+			}
+		}
+		return *out;
+	}
+
+	Point getMorePositive() {
+		Point* out = NULL;
+		for (auto f : faces) {
+			for (auto p : f.points) {
+				if (out == NULL) {
+					out = new Point(p);
+				}
+				if (p.getX() > out->getX())
+					out->setX(p.getX());
+				if (p.getY() > out->getY())
+					out->setY(p.getY());
+				if (p.getZ() > out->getZ())
+					out->setZ(p.getZ());
+			}
+		}
+		return *out;
+	}
+
+	float getBestSizeRepere(Vector center) {
 		float size = 0;
 		for (auto f : faces) {
 			for (auto p : f.points) {
@@ -59,58 +112,18 @@ public:
 		return size;
 	}
 
-	static Point getCenter(vector<Face> faces) {
-		Point pMin = getMoreNegative(faces);
-		Point pMax = getMorePositive(faces);
-		Point p(
-			(pMin.getX() + pMax.getX()) / 2,
-			(pMin.getY() + pMax.getY()) / 2,
-			(pMin.getZ() + pMax.getZ()) / 2);
-		return p;
-	}
-
-	static Point getMoreNegative(vector<Face> faces) {
-		Point* out = NULL;
-		for (auto f : faces) {
-			for (auto p : f.points) {
-				if (out == NULL) {
-					out = new Point(p);
-				}
-				if (p.getX() < out->getX())
-					out->setX(p.getX());
-				if (p.getY() < out->getY())
-					out->setY(p.getY());
-				if (p.getZ() < out->getZ())
-					out->setZ(p.getZ());
-			}
+	void draw() {
+		for (auto p : faces) {
+			p.draw();
 		}
-		return *out;
-	}
-
-	static Point getMorePositive(vector<Face> faces) {
-		Point* out = NULL;
-		for (auto f : faces) {
-			for (auto p : f.points) {
-				if (out == NULL) {
-					out = new Point(p);
-				}
-				if (p.getX() > out->getX())
-					out->setX(p.getX());
-				if (p.getY() > out->getY())
-					out->setY(p.getY());
-				if (p.getZ() > out->getZ())
-					out->setZ(p.getZ());
-			}
-		}
-		return *out;
 	}
 
 };
 
-vector<Face> parseFile(const char* path) {
+Maillage parseFile(const char* path) {
 
 	FILE *f_maillage;
-	vector<Face> faces;
+	Maillage maillage;
 
 	if ((f_maillage = fopen(path, "rb")) == NULL) {
 		printf("\nPas d'acces en lecture sur l'image %s \n", path);
@@ -146,14 +159,14 @@ vector<Face> parseFile(const char* path) {
 				int pt = atoi(strtok(NULL, " ")); // TODO
 				f.addPoint(points[pt]);
 			}
-			faces.push_back(f);
+			maillage.addFace(f);
 		  }
 
 		  cout << "Faces chargées ! " << endl;
 
 	}
 
-	return faces;
+	return maillage;
 
 }
 

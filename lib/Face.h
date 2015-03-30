@@ -51,7 +51,7 @@ public:
 
 	Vector getNormale() {
 		Vector v1(&(points[0]), &(points[1]));
-		Vector v2(&(points[2]), &(points[1]));
+		Vector v2(&(points[0]), &(points[2]));
 		Vector* produit = v2.getProduitVectoriel(&v1);
 		produit->normalize();
 		return *produit;

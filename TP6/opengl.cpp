@@ -123,12 +123,14 @@ float* normales;
 void exercice1() {
 
 	if (r == NULL) {
-		maillage = parseFile("../ressources/triceratops.off");
+		maillage = parseFile("../ressources/bunny.off");
 		r = new Repere(maillage);
 		cout << "center = " << r->center << endl;
 		cout << "size = " << r->size << endl;
 		normales = maillage.getTabNormalesSommets();
 	}
+
+	glEnable(GL_DEPTH_TEST);
 
 	float sizeRepere = r->size;
 	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
@@ -141,6 +143,8 @@ void exercice1() {
 	if (lumiere) {
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
+		float positions[] =  {r->size, r->size, r->size, .8};
+		glLightfv(GL_LIGHT0, GL_POSITION, positions);
 		glEnableClientState (GL_VERTEX_ARRAY);
 		glEnableClientState (GL_NORMAL_ARRAY);
 	}
@@ -162,9 +166,11 @@ void exercice1() {
 
 	glColor4f(1,1,1, 0.2f);
 	if (maillageManuel) {
-		maillage.drawNormalesOnSommet();
 		maillage.drawNormales();
 	}
+
+	//	maillage.drawNormalesOnSommet();
+
 
 
 }

@@ -1,4 +1,4 @@
-bool maillageManuel = false;
+bool maillageManuel = true;
 bool lumiere = true;
 
 #include <stdio.h>      
@@ -117,7 +117,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 }
 
 Maillage maillage;
-
+float* normales;
 
 void exercice1() {
 
@@ -126,6 +126,7 @@ void exercice1() {
 		r = new Repere(maillage);
 		cout << "center = " << r->center << endl;
 		cout << "size = " << r->size << endl;
+		normales = maillage.getTabNormalesSommets();
 	}
 
 	float sizeRepere = r->size;
@@ -144,7 +145,7 @@ void exercice1() {
 	}
 
 	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
-	glNormalPointer (GL_FLOAT, 0, maillage.getTabNormales());
+	glNormalPointer (GL_FLOAT, 0, normales);
 
 	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
 	glDisableClientState(GL_VERTEX_ARRAY);
@@ -152,6 +153,12 @@ void exercice1() {
 	glColor3f(0,0.5,0.5);
 	if (maillageManuel)
 		maillage.draw();
+
+	glColor4f(1,1,1, 0.2f);
+	if (maillageManuel) {
+		maillage.drawNormalesOnSommet();
+		maillage.drawNormales();
+	}
 
 }
 

@@ -124,8 +124,10 @@ void exercice1() {
 
 	maillage.clear();
 
-	Point*** cilyndre = generateCylindre(10,30,m);
-	maillage.loadCylindre(cilyndre, m);
+	Point*** cylindre = generateCylindre(10,30,m);
+	Point*** shpere = generateSphere(10,new Point(0,0,0),m,m);
+	//maillage.loadCylindre(cylindre, m);
+	maillage.loadSphere(shpere, m);
 	r = new Repere(maillage);
 	cout << "center = " << r->center << endl;
 	cout << "size = " << r->size << endl;
@@ -138,6 +140,9 @@ void exercice1() {
 		0,1,0);
 	
 	maillage.draw();
+
+	glColor3f(1,1,1);
+	maillage.drawNormales();
 
 }
 

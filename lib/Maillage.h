@@ -15,7 +15,7 @@ class Maillage {
 public:
 	int nbrFaces = 0;
 	vector<Face> faces;
-	vector<Point> points;
+	vector<Point> points; // Talbeau de points uniques
 	int nbrPtsPerFace = 0;
 
 	void addFace(Face f) {
@@ -28,6 +28,65 @@ public:
 			glColor3f(0,0,(i++) / nbrFaces);
 			p.draw();
 		}
+	}
+
+	void drawNormales() {
+		for (Face f : faces) {
+			Vector n = f.getNormale();
+			Point center = f.barycenter();
+			drawVector(center, n);
+		}
+	}
+
+	void drawNormalesOnSommet() {
+		cout << "Affichage des normales des sommets..." << endl;
+		for (int i = 0; i < points.size(); ++i) {
+			Vector n = getNormaleOfSommet(i);
+			Point center = points[i];
+			drawVector(center, n);
+		}
+		cout << "OK" << endl;
+	}
+
+	vector<Face> getFacesOfSommet(int indice) {
+		vector<Face> tab;
+		for (Face f : faces) {
+			for (int i : f.indices) {
+				if (i == indice) {
+					tab.push_back(f);
+				}
+			}
+		}
+		return tab;
+	}
+
+	Vector getNormaleOfSommet(int indice) {
+		vector<Face> faces = getFacesOfSommet(indice);
+		float sumX = 0, sumY = 0, sumZ = 0, cpt = 0;
+		for (Face f : faces) {
+			Vector v = f.getNormale();
+			sumX += v.getX();
+			sumY += v.getY();
+			sumZ += v.getZ();
+			cpt++;
+		}
+		Vector n(sumX/cpt, sumY/cpt, sumZ/cpt);
+		n.normalize();
+		return n;
+	}
+
+	float* getTabNormalesSommets() {
+		cout << "Chargement des normales des sommets..." << endl;
+		float* tab = new float[points.size()*3];
+		int cpt = 0;
+		for (int i = 0; i < points.size(); ++i) {
+			Vector normale = getNormaleOfSommet(i);
+			tab[cpt++] = normale.getX();
+			tab[cpt++] = normale.getY();
+			tab[cpt++] = normale.getZ();
+		}
+		cout << "OK" << endl;
+		return tab;
 	}
 
 	// AFFICHAGE DYNAMIQUE OPENGL
@@ -72,31 +131,52 @@ public:
 		return tab;
 	}
 
+	void clear() {
+		faces.clear();
+		points.clear();
+	}
+
 	void loadCylindre(Point*** faces, int m) {
 
-		int nbrPtsOnFace;
+		this->clear();
 
-		this->nbrFaces = m;
+		int nbrPtsOnFace;
+		this->nbrFaces = m*2;
 
 		for (int i = 0; i < m; ++i) {
 			Point** ptsFaces = faces[i+2];
 			nbrPtsOnFace = 4;
 			Face f1, f2;
 			f1.addPoint(*ptsFaces[0]);
-			f1.addPoint(*ptsFaces[1]);
 			f1.addPoint(*ptsFaces[2]);
+			f1.addPoint(*ptsFaces[1]);
 			f2.addPoint(*ptsFaces[0]);
-			f2.addPoint(*ptsFaces[2]);
 			f2.addPoint(*ptsFaces[3]);
+			f2.addPoint(*ptsFaces[2]);
 			addFace(f1);
 			addFace(f2);
 		}
-
 	}
 
-	void clear() {
-		faces.clear();
-		points.clear();
+	void loadSphere(Point*** faces, int m) {
+		this->clear();
+		this->nbrFaces = m*m*2;
+		cout << "nbrFaces = " << nbrFaces << endl;
+		for (int i = 0; i < m-1; ++i) {
+			for (int j = 0; j < m; ++j) {
+				int nFace = i*m + j;
+				Point** ptsFaces = faces[nFace];
+				Face f1, f2;
+				f1.addPoint(*ptsFaces[0]);
+				f1.addPoint(*ptsFaces[2]);
+				f1.addPoint(*ptsFaces[1]);
+				f2.addPoint(*ptsFaces[0]);
+				f2.addPoint(*ptsFaces[3]);
+				f2.addPoint(*ptsFaces[2]);
+				addFace(f1);
+				addFace(f2);
+			}
+		}
 	}
 
 };
@@ -136,7 +216,7 @@ Maillage parseFile(const char* path) {
 		char buffer[250];
 		fgets (buffer, sizeof(buffer), f_maillage);
 		while (fgets (buffer, sizeof(buffer), f_maillage)) {
-			printf("line = %s\n", buffer);
+			//printf("line = %s\n", buffer);
 			Face f;
 			int nbrPoints = atoi(strtok(buffer, " "));
 			maillage.nbrPtsPerFace = nbrPoints;

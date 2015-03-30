@@ -1,6 +1,3 @@
-bool maillageManuel = false;
-bool lumiere = true;
-
 #include <stdio.h>      
 #include <stdlib.h>    
 #include <math.h>
@@ -15,6 +12,8 @@ bool lumiere = true;
 #define ALPHA 1
 
 #define KEY_ESC 27
+
+int m = 6;
 
 void init_scene();
 void render_scene();
@@ -97,10 +96,10 @@ GLvoid window_key(unsigned char key, int x, int y)
 	switch (key) {    
 		case KEY_ESC:  
 		exit(1); break; 
-		case 43: break; // +
-		case 45: break; // --
-		case 97: lumiere = !lumiere; break;// a
-		case 122: maillageManuel = !maillageManuel; break;// z
+		case 43: m++; break; // +
+		case 45: m--; break; // --
+		case 97:  break;// a
+		case 122:break;// z
 		case 101: // e
 		case 114: // r
 		case 111: // o (haut)
@@ -113,7 +112,7 @@ GLvoid window_key(unsigned char key, int x, int y)
 		printf ("La touche %d n´est pas active.\n", key);
 		break;
 	}     
-	render_scene();
+	window_display();
 }
 
 Maillage maillage;
@@ -121,37 +120,24 @@ Maillage maillage;
 
 void exercice1() {
 
-	if (r == NULL) {
-		maillage = parseFile("../ressources/bunny.off");
-		r = new Repere(maillage);
-		cout << "center = " << r->center << endl;
-		cout << "size = " << r->size << endl;
-	}
+	cout << "m =" << m << endl;
+
+	maillage.clear();
+
+	Point*** cilyndre = generateCylindre(10,30,m);
+	maillage.loadCylindre(cilyndre, m);
+	r = new Repere(maillage);
+	cout << "center = " << r->center << endl;
+	cout << "size = " << r->size << endl;
 
 	float sizeRepere = r->size;
 	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
-	gluLookAt(
+		gluLookAt(
 		eyeX,eyeY,eyeZ,
 		r->center.getX(),r->center.getY(),r->center.getZ(),
 		0,1,0);
 	
-	glColor3f(0.5,0,0.5);
-	if (lumiere) {
-		glEnable(GL_LIGHTING);
-		glEnable(GL_LIGHT0);
-		glEnableClientState (GL_VERTEX_ARRAY);
-		glEnableClientState (GL_NORMAL_ARRAY);
-	}
-
-	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
-	glNormalPointer (GL_FLOAT, 0, maillage.getTabNormales());
-
-	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
-	glDisableClientState(GL_VERTEX_ARRAY);
-
-	glColor3f(0,0.5,0.5);
-	if (maillageManuel)
-		maillage.draw();
+	maillage.draw();
 
 }
 

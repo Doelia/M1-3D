@@ -23,7 +23,6 @@ public:
 	}
 
 	void draw() {
-
 		float i = 0;
 		for (auto p : faces) {
 			glColor3f(0,0,(i++) / nbrFaces);
@@ -73,8 +72,34 @@ public:
 		return tab;
 	}
 
-};
+	void loadCylindre(Point*** faces, int m) {
 
+		int nbrPtsOnFace;
+
+		this->nbrFaces = m;
+
+		for (int i = 0; i < m; ++i) {
+			Point** ptsFaces = faces[i+2];
+			nbrPtsOnFace = 4;
+			Face f1, f2;
+			f1.addPoint(*ptsFaces[0]);
+			f1.addPoint(*ptsFaces[1]);
+			f1.addPoint(*ptsFaces[2]);
+			f2.addPoint(*ptsFaces[0]);
+			f2.addPoint(*ptsFaces[2]);
+			f2.addPoint(*ptsFaces[3]);
+			addFace(f1);
+			addFace(f2);
+		}
+
+	}
+
+	void clear() {
+		faces.clear();
+		points.clear();
+	}
+
+};
 
 
 Maillage parseFile(const char* path) {
@@ -110,20 +135,20 @@ Maillage parseFile(const char* path) {
 		// Chargement des sommets
 		char buffer[250];
 		fgets (buffer, sizeof(buffer), f_maillage);
-		  while (fgets (buffer, sizeof(buffer), f_maillage)) {
-		  	printf("line = %s\n", buffer);
+		while (fgets (buffer, sizeof(buffer), f_maillage)) {
+			printf("line = %s\n", buffer);
 			Face f;
-		    int nbrPoints = atoi(strtok(buffer, " "));
-		    maillage.nbrPtsPerFace = nbrPoints;
-		    for (int j = 0; j < nbrPoints; ++j) {
+			int nbrPoints = atoi(strtok(buffer, " "));
+			maillage.nbrPtsPerFace = nbrPoints;
+			for (int j = 0; j < nbrPoints; ++j) {
 				int pt = atoi(strtok(NULL, " "));
 				f.indices.push_back(pt);
 				f.addPoint(points[pt]);
 			}
 			maillage.addFace(f);
-		  }
+		}
 
-		  cout << "Faces chargées ! " << endl;
+		cout << "Faces chargées ! " << endl;
 	}
 
 	return maillage;

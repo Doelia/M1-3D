@@ -1,4 +1,5 @@
-bool maillageManuel = true;
+bool maillageManuel = false;
+bool maillageAuto = true;
 bool lumiere = true;
 
 #include <stdio.h>      
@@ -122,7 +123,7 @@ float* normales;
 void exercice1() {
 
 	if (r == NULL) {
-		maillage = parseFile("../ressources/bunny.off");
+		maillage = parseFile("../ressources/triceratops.off");
 		r = new Repere(maillage);
 		cout << "center = " << r->center << endl;
 		cout << "size = " << r->size << endl;
@@ -144,21 +145,27 @@ void exercice1() {
 		glEnableClientState (GL_NORMAL_ARRAY);
 	}
 
-	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
-	glNormalPointer (GL_FLOAT, 0, normales);
+	if (maillageAuto) {
+		glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
+		glNormalPointer (GL_FLOAT, 0, normales);
 
-	glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
-	glDisableClientState(GL_VERTEX_ARRAY);
+		glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	
 
 	glColor3f(0,0.5,0.5);
-	if (maillageManuel)
-		maillage.draw();
+	if (maillageManuel) {
+		//maillage.draw();
+	}
 
 	glColor4f(1,1,1, 0.2f);
 	if (maillageManuel) {
 		maillage.drawNormalesOnSommet();
 		maillage.drawNormales();
 	}
+
 
 }
 

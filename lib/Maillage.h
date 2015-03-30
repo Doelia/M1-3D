@@ -18,6 +18,8 @@ public:
 	vector<Point> points; // Talbeau de points uniques
 	int nbrPtsPerFace = 0;
 
+	vector<Face>* indexationFaces = NULL; // Sommet => Faces
+
 	void addFace(Face f) {
 		faces.push_back(f);
 	}
@@ -48,16 +50,19 @@ public:
 		cout << "OK" << endl;
 	}
 
-	vector<Face> getFacesOfSommet(int indice) {
-		vector<Face> tab;
+	void loadIndexationFaces() {
+		indexationFaces = new vector<Face>[points.size()];
 		for (Face f : faces) {
 			for (int i : f.indices) {
-				if (i == indice) {
-					tab.push_back(f);
-				}
+				indexationFaces[i].push_back(f);
 			}
 		}
-		return tab;
+	}
+
+	vector<Face> getFacesOfSommet(int indice) {
+		if (indexationFaces == NULL)
+			loadIndexationFaces();
+		return indexationFaces[indice];
 	}
 
 	Vector getNormaleOfSommet(int indice) {

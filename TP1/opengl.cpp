@@ -158,7 +158,7 @@ void render_scene()
 
 	glColor3f(0, 1.0, 1.0);
 	glBegin(GL_POINTS);
-		glVertex3f(c->getX(), c->getY(), c->getZ());
+  glVertex3f(c->getX(), c->getY(), c->getZ());
 	glEnd();
 
 	// droite BC

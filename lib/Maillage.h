@@ -221,7 +221,7 @@ Maillage parseFile(const char* path) {
 		char buffer[250];
 		fgets (buffer, sizeof(buffer), f_maillage);
 		while (fgets (buffer, sizeof(buffer), f_maillage)) {
-			//printf("line = %s\n", buffer);
+			printf("line = %s\n", buffer);
 			Face f;
 			int nbrPoints = atoi(strtok(buffer, " "));
 			maillage.nbrPtsPerFace = nbrPoints;

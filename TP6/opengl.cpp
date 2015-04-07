@@ -1,5 +1,5 @@
 bool maillageManuel = false;
-bool maillageAuto = true;
+bool maillageAuto = false;
 bool lumiere = true;
 
 #include <stdio.h>      
@@ -82,8 +82,13 @@ void init_scene() {
 GLvoid window_display() {
 	cout << "window_display()" << endl;
 	glClear(GL_COLOR_BUFFER_BIT);
+
 	glMatrixMode(GL_PROJECTION);    
 	glLoadIdentity();
+	gluPerspective( 90.0, 1.0, 1.0, 200.0 );
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
 	render_scene();
 	glFlush();
 }
@@ -123,7 +128,7 @@ float* normales;
 void exercice1() {
 
 	if (r == NULL) {
-		maillage = parseFile("../ressources/bunny.off");
+		maillage = parseFile("../ressources/triceratops.off");
 		r = new Repere(maillage);
 		cout << "center = " << r->center << endl;
 		cout << "size = " << r->size << endl;
@@ -133,17 +138,16 @@ void exercice1() {
 	glEnable(GL_DEPTH_TEST);
 
 	float sizeRepere = r->size;
-	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
+	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere*3, sizeRepere*3);
 	gluLookAt(
 		eyeX,eyeY,eyeZ,
 		r->center.getX(),r->center.getY(),r->center.getZ(),
 		0,1,0);
 	
-	glColor3f(0.5,0,0.5);
 	if (lumiere) {
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
-		float positions[] =  {r->size, r->size, r->size, .8};
+		float positions[] =  {10,10,0,.8};
 		glLightfv(GL_LIGHT0, GL_POSITION, positions);
 		glEnableClientState (GL_VERTEX_ARRAY);
 		glEnableClientState (GL_NORMAL_ARRAY);
@@ -153,23 +157,24 @@ void exercice1() {
 		glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
 		glNormalPointer (GL_FLOAT, 0, normales);
 
+		cout << "maillage.getNbrIndices() = " << maillage.getNbrIndices() << endl;
+		cout << "maillage.nbrPtsPerFace() = " << maillage.nbrPtsPerFace << endl;
 		glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
 		glDisableClientState(GL_VERTEX_ARRAY);
 	}
 
+	glutSolidSphere(10,10,10);
+	//glutSolidCube(10);
 	
 
 	glColor3f(0,0.5,0.5);
 	if (maillageManuel) {
-		//maillage.draw();
+		maillage.draw();
 	}
 
-	glColor4f(1,1,1, 0.2f);
-	if (maillageManuel) {
-		maillage.drawNormales();
-	}
-
-	//	maillage.drawNormalesOnSommet();
+	glColor4f(1,0,1, 0.2f);
+	// maillage.drawNormalesOnSommet();
+	// maillage.drawNormales();
 
 
 

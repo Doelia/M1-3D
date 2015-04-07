@@ -32,10 +32,10 @@ void drawPoints(Point** tab, long nbPoints) {
 }
 
 void drawVector(Point center, Vector v) {
-	Point debut = center;
+	Point debut(center);
 	Point bout(center);
 	bout.add(&v);
-	glBegin(GL_LINE_STRIP);
+	glBegin(GL_LINES);
 	drawPoint(&debut);
 	drawPoint(&bout);
 	glEnd();

@@ -19,7 +19,17 @@ public:
 	vector<int> indices;
 
 	Face() {
+	}
 
+	Point barycenter() {
+		Point enFace = points[0];
+		Vector base(&points[1], &points[2]);
+		base.diviseNorme(.5);
+		base.add(&points[1]);
+		Vector v(&base, &enFace);
+		v.diviseNorme(.3);
+		v.add(&base);
+		return v;
 	}
 
 	void addPoint(Point p) {
@@ -46,7 +56,6 @@ public:
 		produit->normalize();
 		return *produit;
 	}
-
 
 };
 

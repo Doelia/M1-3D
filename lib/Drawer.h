@@ -31,6 +31,16 @@ void drawPoints(Point** tab, long nbPoints) {
 	glEnd();
 }
 
+void drawVector(Point center, Vector v) {
+	Point debut(center);
+	Point bout(center);
+	bout.add(&v);
+	glBegin(GL_LINES);
+	drawPoint(&debut);
+	drawPoint(&bout);
+	glEnd();
+}
+
 void drawMatrice(Point*** tab, int u, int v) {
 	glBegin(GL_POINTS);
 	for (int i = 0; i < u; ++i) {

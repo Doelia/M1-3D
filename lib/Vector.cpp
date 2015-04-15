@@ -34,9 +34,9 @@ double Vector::getScalar(Vector* v) {
 Vector* Vector::getProduitVectoriel(Vector* v) {
 	Vector* u = this;
 	return new Vector(
-		u->y*v->z - u->z*v->y,
-		u->z*v->x - u->x*v->z,
-		u->x*v->y - u->y*v->x
+		u->y * v->z - u->z * v->y,
+		u->z * v->x - u->x * v->z,
+		u->x * v->y - u->y * v->x
 	);
 }
 

@@ -1,3 +1,7 @@
+bool maillageManuel = false;
+bool maillageAuto = false;
+bool lumiere = true;
+
 #include <stdio.h>      
 #include <stdlib.h>    
 #include <math.h>
@@ -78,8 +82,13 @@ void init_scene() {
 GLvoid window_display() {
 	cout << "window_display()" << endl;
 	glClear(GL_COLOR_BUFFER_BIT);
+
 	glMatrixMode(GL_PROJECTION);    
 	glLoadIdentity();
+	gluPerspective( 90.0, 1.0, 1.0, 200.0 );
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+
 	render_scene();
 	glFlush();
 }
@@ -96,8 +105,8 @@ GLvoid window_key(unsigned char key, int x, int y)
 		exit(1); break; 
 		case 43: break; // +
 		case 45: break; // --
-		case 97: // a
-		case 122: // z
+		case 97: lumiere = !lumiere; break;// a
+		case 122: maillageManuel = !maillageManuel; break;// z
 		case 101: // e
 		case 114: // r
 		case 111: // o (haut)
@@ -114,37 +123,60 @@ GLvoid window_key(unsigned char key, int x, int y)
 }
 
 Maillage maillage;
+float* normales;
 
 void exercice1() {
 
 	if (r == NULL) {
-		maillage = parseFile("../ressources/max.off");
+		maillage = parseFile("../ressources/triceratops.off");
 		r = new Repere(maillage);
 		cout << "center = " << r->center << endl;
 		cout << "size = " << r->size << endl;
+		normales = maillage.getTabNormalesSommets();
 	}
 
+	glEnable(GL_DEPTH_TEST);
+
 	float sizeRepere = r->size;
-	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
+	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere*3, sizeRepere*3);
 	gluLookAt(
 		eyeX,eyeY,eyeZ,
 		r->center.getX(),r->center.getY(),r->center.getZ(),
 		0,1,0);
 	
-	glColor3f(0.5,0,0.5);
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glEnableClientState (GL_VERTEX_ARRAY);
-	glEnableClientState (GL_NORMAL_ARRAY);
+	if (lumiere) {
+		glEnable(GL_LIGHTING);
+		glEnable(GL_LIGHT0);
+		float positions[] =  {10,10,0,.8};
+		glLightfv(GL_LIGHT0, GL_POSITION, positions);
+		glEnableClientState (GL_VERTEX_ARRAY);
+		glEnableClientState (GL_NORMAL_ARRAY);
+	}
 
-	glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
-	glNormalPointer (GL_FLOAT, 0, maillage.getTabNormales());
+	if (maillageAuto) {
+		glVertexPointer(maillage.nbrPtsPerFace, GL_FLOAT, 0, maillage.getTabPoints());
+		glNormalPointer (GL_FLOAT, 0, normales);
 
-	//glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
-	glDisableClientState(GL_VERTEX_ARRAY);
+		cout << "maillage.getNbrIndices() = " << maillage.getNbrIndices() << endl;
+		cout << "maillage.nbrPtsPerFace() = " << maillage.nbrPtsPerFace << endl;
+		glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
+		glDisableClientState(GL_VERTEX_ARRAY);
+	}
+
+	glutSolidSphere(10,10,10);
+	//glutSolidCube(10);
+	
 
 	glColor3f(0,0.5,0.5);
-	maillage.draw();
+	if (maillageManuel) {
+		maillage.draw();
+	}
+
+	glColor4f(1,0,1, 0.2f);
+	// maillage.drawNormalesOnSommet();
+	// maillage.drawNormales();
+
+
 
 }
 

@@ -18,7 +18,7 @@ public:
 	}
 
 	virtual bool isOn(const Voxel& p) {
-		return this->intersect(*(p.p), p.size*5);
+		return this->intersect(*(p.p), p.size*10);
 	}
 
 	virtual bool isOut(const Voxel& p) {

@@ -53,10 +53,14 @@ void Coord::multiply(const Coord* v) {
 }
 
 
-Coord::Coord(Coord& v) {
+Coord::Coord(const Coord& v) {
 	x = v.x;
 	y = v.y;
 	z = v.z;
+}
+
+Coord::~Coord() {
+	
 }
 
 ostream& operator<<(ostream &flux, Coord& v) {

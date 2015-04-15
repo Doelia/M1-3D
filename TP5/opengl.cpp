@@ -143,27 +143,56 @@ GLvoid window_key(unsigned char key, int x, int y)
 	render_scene();
 }
 
-void exercice2() {
+void intersection() {
 	Point p(0,0,0);
 	Vector v(1,0,0);
-	intesectSphereCilynder(p, 5, 5, v, 5);
+	valueFlagOn = 0;
+	valueFlagIn = 1;
+	valueFlagOut = 0;
+	intesectSphereCilynder(p, 5, 1.5, v, 6, 2);
 }
 
-void exercice1_shpere() {
-	Point p(0,0,0);
-	drawShpereAdaptatif(p, 5, 6);
-}
-
-void exercice1_cilynder() {
+void union2() {
+	valueFlagOn = 1;
+	valueFlagIn = 0;
+	valueFlagOut = 0;
 	Point p(0,0,0);
 	Vector v(1,0,0);
-	drawCilrindreAdaptatif(p, 5, v, 6);
+	intesectSphereCilynder(p, 5, 1.5, v, 6, 3);
+}
+
+void minus2() {
+	valueFlagOn = 0;
+	valueFlagIn = 1;
+	valueFlagOut = 0;
+	Point p(0,0,0);
+	Vector v(1,0,0);
+	intesectSphereCilynder(p, 5, 1.5, v, 6, 1);
+}
+
+void sphere() {
+	valueFlagOn = 1;
+	valueFlagIn = 1;
+	valueFlagOut = 2;
+	Point p(0,0,0);
+	drawShpereAdaptatif(p, 5, 5);
+}
+
+void cilynder() {
+	valueFlagOn = 1;
+	valueFlagIn = 1;
+	valueFlagOut = 2;
+	Point p(0,0,0);
+	Vector v(2,0,0);
+	drawCilrindreAdaptatif(p, 2, v, 5);
 }
 
 void render_scene() {
 	cout << "==================  RENDER  =======================" << endl;
-	exercice1_cilynder();
-	exercice2();
-	//tests();
+	//sphere();
+	cilynder();
+	//union2();
+	//intersection();
+	//minus2();
 }
 

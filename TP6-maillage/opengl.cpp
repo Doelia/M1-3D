@@ -85,9 +85,9 @@ GLvoid window_display() {
 
 	glMatrixMode(GL_PROJECTION);    
 	glLoadIdentity();
-	gluPerspective( 90.0, 1.0, 1.0, 200.0 );
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	//gluPerspective( 90.0, 1.0, 1.0, 200.0 );
+	//glMatrixMode(GL_MODELVIEW);
+	//glLoadIdentity();
 
 	render_scene();
 	glFlush();
@@ -143,14 +143,15 @@ void exercice1() {
 		eyeX,eyeY,eyeZ,
 		r->center.getX(),r->center.getY(),r->center.getZ(),
 		0,1,0);
-	
+
+	glEnableClientState (GL_VERTEX_ARRAY);
+	glEnableClientState (GL_NORMAL_ARRAY);
+
 	if (lumiere) {
 		glEnable(GL_LIGHTING);
 		glEnable(GL_LIGHT0);
 		float positions[] =  {10,10,0,.8};
 		glLightfv(GL_LIGHT0, GL_POSITION, positions);
-		glEnableClientState (GL_VERTEX_ARRAY);
-		glEnableClientState (GL_NORMAL_ARRAY);
 	}
 
 	if (maillageAuto) {
@@ -160,8 +161,10 @@ void exercice1() {
 		cout << "maillage.getNbrIndices() = " << maillage.getNbrIndices() << endl;
 		cout << "maillage.nbrPtsPerFace() = " << maillage.nbrPtsPerFace << endl;
 		glDrawElements (GL_TRIANGLES, maillage.getNbrIndices(), GL_UNSIGNED_INT, maillage.getTabIndices());
-		glDisableClientState(GL_VERTEX_ARRAY);
 	}
+
+	glDisableClientState(GL_VERTEX_ARRAY);
+
 
 	glutSolidSphere(10,10,10);
 	//glutSolidCube(10);
@@ -175,8 +178,6 @@ void exercice1() {
 	glColor4f(1,0,1, 0.2f);
 	// maillage.drawNormalesOnSommet();
 	// maillage.drawNormales();
-
-
 
 }
 

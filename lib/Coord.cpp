@@ -77,3 +77,15 @@ void Coord::set(Coord &v) {
 float Coord::sum() {
 	return x+y+z;
 }
+
+
+bool Coord::equalsTolerance(const Coord& p, float t) {
+	if (p.getX() != this->getX())
+		return false;
+	if (p.getY() != this->getY())
+		return false;
+	if (p.getZ() != this->getZ())
+		return false;
+	return true;
+} 
+

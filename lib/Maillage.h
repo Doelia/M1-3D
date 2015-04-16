@@ -14,23 +14,37 @@ using namespace std;
 class Maillage {
 public:
 	int nbrFaces = 0;
-	vector<Face> faces;
-	vector<Point> points; // Talbeau de points uniques
-	int nbrPtsPerFace = 0;
+	int nbrPtsPerFace = 0; // Forcé à 3 depuis l'utilisation de l'indéxtation
 
+	vector<Face> faces; // TOutes les faces calculées
+
+	vector<Point> points; // Talbeau de points uniques 
 	vector<Face>* indexationFaces = NULL; // Sommet => Faces
+
+
+	void clear() {
+		faces.clear();
+		points.clear();
+		if (indexationFaces != NULL) indexationFaces->clear();
+	}
+
+
+	// FONCTIONS STOCKAGE PAR FACES
 
 	void addFace(Face f) {
 		faces.push_back(f);
 	}
 
-	void draw() {
-		float i = 0;
-		for (auto p : faces) {
-			glColor3f(0,0,(i++) / nbrFaces);
-			p.draw();
+	int pointExits(Point x) {
+		int i = 0;
+		for (Point p : points) {
+			if (p.equalsTolerance(x, 0.0001f)) {
+				return i;
+			}
+			i++;
 		}
-	}
+		return -1;
+	} 
 
 	void drawNormales() {
 		for (Face f : faces) {
@@ -48,6 +62,14 @@ public:
 			drawVector(center, n);
 		}
 		cout << "OK" << endl;
+	}
+
+	void draw() {
+		float i = 0;
+		for (auto p : faces) {
+			glColor3f(0,0,(i++) / nbrFaces);
+			p.draw();
+		}
 	}
 
 	void loadIndexationFaces() {
@@ -80,6 +102,21 @@ public:
 		return n;
 	}
 
+	float* getTabNormales() {
+		cout << "chargement des normales..." << endl;
+		float* tab = new float[nbrFaces*3];
+		int i = 0;
+		for (Face f : faces) {
+			Vector v = f.getNormale();
+			tab[i++] = v.getX();
+			tab[i++] = v.getY();
+			tab[i++] = v.getZ();
+		}
+		return tab;
+	}
+
+	// FONCTIONS STOCKAGE PAR INDEXATION / OFF
+
 	float* getTabNormalesSommets() {
 		cout << "Chargement des normales des sommets..." << endl;
 		float* tab = new float[points.size()*3];
@@ -94,12 +131,11 @@ public:
 		return tab;
 	}
 
-	// AFFICHAGE DYNAMIQUE OPENGL
-
 	GLfloat* getTabPoints() {
 		GLfloat* tab = new GLfloat[points.size()*3];
 		int i = 0;
 		for (Point p : points) {
+			cout << p << endl;
 			tab[i++] = p.getX();
 			tab[i++] = p.getY();
 			tab[i++] = p.getZ();
@@ -116,72 +152,69 @@ public:
 		int i = 0;
 		for (Face f : faces) {
 			for (int indice : f.indices) {
+				cout << "indice[" << i << "] = " << indice << endl;
 				tab[i++] = indice;
 			}
 		}
 		return tab;
 	}
 
-	float* getTabNormales() {
-		cout << "chargement des normales..." << endl;
-		float* tab = new float[nbrFaces*3];
-		int i = 0;
-		for (Face f : faces) {
-			Vector v = f.getNormale();
-			//cout << "v = " << v << endl;
-			tab[i++] = v.getX();
-			tab[i++] = v.getY();
-			tab[i++] = v.getZ();
+	// Retoune l'indece. En créé un s'il n'existe pas encore
+	int addNewPoint(Point p) {
+		int indice = this->pointExits(p);
+		if (indice >= 0) {
+			return indice;
+		} else {
+			points.push_back(p);
+			return points.size() - 1;
 		}
-		return tab;
 	}
 
-	void clear() {
-		faces.clear();
-		points.clear();
+	Face createFaceAndIndexeIt(Point p1, Point p2, Point p3) {
+		Face f;
+		f.addPoint(p1);
+		f.addPoint(p2);
+		f.addPoint(p3);
+		f.indices.push_back(addNewPoint(p1));
+		f.indices.push_back(addNewPoint(p2));
+		f.indices.push_back(addNewPoint(p3));
+		return f;
 	}
+
+	// CHARGEMENTS / DECHARGEMENTS
 
 	void loadCylindre(Point*** faces, int m) {
 
 		this->clear();
-
-		int nbrPtsOnFace;
+		nbrPtsPerFace = 3;
 		this->nbrFaces = m*2;
 
 		for (int i = 0; i < m; ++i) {
 			Point** ptsFaces = faces[i+2];
-			nbrPtsOnFace = 4;
-			Face f1, f2;
-			f1.addPoint(*ptsFaces[0]);
-			f1.addPoint(*ptsFaces[2]);
-			f1.addPoint(*ptsFaces[1]);
-			f2.addPoint(*ptsFaces[0]);
-			f2.addPoint(*ptsFaces[3]);
-			f2.addPoint(*ptsFaces[2]);
-			addFace(f1);
-			addFace(f2);
+			addFace(createFaceAndIndexeIt(*ptsFaces[0], *ptsFaces[2], *ptsFaces[1]));
+			addFace(createFaceAndIndexeIt(*ptsFaces[0], *ptsFaces[3], *ptsFaces[2]));
 		}
 	}
 
 	void loadSphere(Point*** faces, int m) {
+
 		this->clear();
 		this->nbrFaces = m*m*2;
+		this->nbrPtsPerFace = 3;
+
 		cout << "nbrFaces = " << nbrFaces << endl;
 		for (int i = 0; i < m-1; ++i) {
 			for (int j = 0; j < m; ++j) {
 				int nFace = i*m + j;
 				Point** ptsFaces = faces[nFace];
-				Face f1, f2;
-				f1.addPoint(*ptsFaces[0]);
-				f1.addPoint(*ptsFaces[2]);
-				f1.addPoint(*ptsFaces[1]);
-				f2.addPoint(*ptsFaces[0]);
-				f2.addPoint(*ptsFaces[3]);
-				f2.addPoint(*ptsFaces[2]);
-				addFace(f1);
-				addFace(f2);
+				addFace(createFaceAndIndexeIt(*ptsFaces[0], *ptsFaces[2], *ptsFaces[1]));
+				addFace(createFaceAndIndexeIt(*ptsFaces[0], *ptsFaces[3], *ptsFaces[2]));
 			}
 		}
+	}
+
+	void writeOffFormat() {
+
 	}
 
 };

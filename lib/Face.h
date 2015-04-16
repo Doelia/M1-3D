@@ -15,8 +15,8 @@ using namespace std;
 class Face {
 public:
 
-	vector<Point> points;
-	vector<int> indices;
+	vector<Point> points; // Coordonées des points composants la face
+	vector<int> indices; // Indexe des numéro des points
 
 	Face() {
 	}

@@ -25,6 +25,7 @@ public:
 	virtual void add(Coord*);
 	virtual void multiply(const Coord*);
 	virtual float sum();
+	virtual bool equalsTolerance(const Coord&, float t);
 	void set(Coord&);
 };
 

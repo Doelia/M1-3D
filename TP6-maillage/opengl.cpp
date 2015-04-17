@@ -1,5 +1,5 @@
 bool maillageManuel = false;
-bool maillageAuto = false;
+bool maillageAuto = true;
 bool lumiere = true;
 
 #include <stdio.h>      
@@ -164,9 +164,10 @@ void exercice1() {
 	}
 
 	glDisableClientState(GL_VERTEX_ARRAY);
+	glDisableClientState(GL_NORMAL_ARRAY);
 
 
-	glutSolidSphere(10,10,10);
+	//glutSolidSphere(10,10,10);
 	//glutSolidCube(10);
 	
 

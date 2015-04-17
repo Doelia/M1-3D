@@ -32,9 +32,9 @@ Repere* r;
 
 void eyePosition( void ) {
 	if (r != NULL) {
-		eyeX = r->center.getX() + r->size/2 * sin(theta*0.0174532) * sin(phi*0.0174532);
-		eyeY = r->center.getY() + r->size/2 * cos(theta*0.0174532);
-		eyeZ = r->center.getZ() + r->size/2 * sin(theta*0.0174532) * cos(phi*0.0174532);
+		eyeX = r->center.getX() + r->size/2 * - sinf(phi * (M_PI / 180)) * cosf((theta) * (M_PI / 180));
+		eyeY = r->center.getY() + r->size/2 * - sinf((theta) * (M_PI / 180));
+		eyeZ = r->center.getZ() - r->size/2 * cosf((phi) * (M_PI / 180)) * cosf((theta) * (M_PI / 180));
 		glutPostRedisplay();
 	}
 }
@@ -52,42 +52,35 @@ int main(int argc, char **argv)  {
 	glutInitDisplayMode(GLUT_RGBA);
 	glutInitWindowPosition(0, 0);
 	glutInitWindowSize(WIDTH, HEIGHT);
-	glutCreateWindow("Premier exemple : carré");
-	initGL();  
-	init_scene();
+	glutCreateWindow("TP 3D");
+
+	glEnable(GL_BLEND);
+	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_DEPTH);
+	glDepthFunc(GL_LEQUAL);
+	glClearColor(RED, GREEN, BLUE, ALPHA);   
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	glutPassiveMotionFunc(&onMouseMove);
-
 	glutDisplayFunc(&window_display);
 	glutReshapeFunc(&window_reshape);
 
 	glutKeyboardFunc(&window_key);
-	glEnable(GL_BLEND);
+	glDisable(GL_BLEND);
 	glutMainLoop();  
 
 	return 1;
 }
 
-GLvoid initGL()  {
-	glClearColor(RED, GREEN, BLUE, ALPHA);   
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);     
-}
-
-void init_scene() {
-	glPointSize(3);
-}
 
 GLvoid window_display() {
 	cout << "window_display()" << endl;
-	glClear(GL_COLOR_BUFFER_BIT);
-	glMatrixMode(GL_PROJECTION);    
-	glLoadIdentity();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
 	render_scene();
-	glFlush();
 }
 
 GLvoid window_reshape(GLsizei width, GLsizei height) {  
-	cout << "window_reshape()" << endl;
 	glViewport(0, 0, width, height);
 }
 
@@ -126,20 +119,28 @@ void exercice1() {
 
 	Point*** cylindre = generateCylindre(10,30,m);
 	Point*** shpere = generateSphere(10,new Point(0,0,0),m,m);
-	maillage.loadCylindre(cylindre, m);
 
-	cout << "Chargement sphere..." << endl;
+	maillage.loadCylindre(cylindre, m);
 	//maillage.loadSphere(shpere, m);
+	//maillage = parseFile("../ressources/triceratops.off");
+
 	r = new Repere(maillage);
 	cout << "center = " << r->center << endl;
 	cout << "size = " << r->size << endl;
 
 	float sizeRepere = r->size;
+
+
+	glMatrixMode(GL_PROJECTION);    
+	glLoadIdentity();
 	glOrtho(-sizeRepere, sizeRepere, -sizeRepere, sizeRepere, -sizeRepere, sizeRepere);
-		gluLookAt(
-		eyeX,eyeY,eyeZ,
-		r->center.getX(),r->center.getY(),r->center.getZ(),
-		0,1,0);
+
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	gluLookAt(
+	eyeX,eyeY,eyeZ,
+	r->center.getX(),r->center.getY(),r->center.getZ(),
+	0,1,0);
 
 	if (false) {
 		maillage.draw();
@@ -161,7 +162,10 @@ void exercice1() {
 	
 
 	glColor3f(1,1,1);
-	maillage.drawNormales();
+	//maillage.drawNormales();
+
+	glFlush();
+	glutSwapBuffers();
 
 
 }

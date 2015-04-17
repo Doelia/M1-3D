@@ -21,13 +21,11 @@ public:
 	vector<Point> points; // Talbeau de points uniques 
 	vector<Face>* indexationFaces = NULL; // Sommet => Faces
 
-
 	void clear() {
 		faces.clear();
 		points.clear();
 		if (indexationFaces != NULL) indexationFaces->clear();
 	}
-
 
 	// FONCTIONS STOCKAGE PAR FACES
 
@@ -66,9 +64,9 @@ public:
 
 	void draw() {
 		float i = 0;
-		for (auto p : faces) {
-			glColor3f(0,0,(i++) / nbrFaces);
-			p.draw();
+		for (Face f : faces) {
+			glColor4f(0,0,(i++) / nbrFaces,1);
+			f.draw();
 		}
 	}
 
@@ -135,7 +133,6 @@ public:
 		GLfloat* tab = new GLfloat[points.size()*3];
 		int i = 0;
 		for (Point p : points) {
-			cout << p << endl;
 			tab[i++] = p.getX();
 			tab[i++] = p.getY();
 			tab[i++] = p.getZ();
@@ -152,7 +149,6 @@ public:
 		int i = 0;
 		for (Face f : faces) {
 			for (int indice : f.indices) {
-				cout << "indice[" << i << "] = " << indice << endl;
 				tab[i++] = indice;
 			}
 		}
@@ -254,7 +250,7 @@ Maillage parseFile(const char* path) {
 		char buffer[250];
 		fgets (buffer, sizeof(buffer), f_maillage);
 		while (fgets (buffer, sizeof(buffer), f_maillage)) {
-			printf("line = %s\n", buffer);
+			//printf("line = %s\n", buffer);
 			Face f;
 			int nbrPoints = atoi(strtok(buffer, " "));
 			maillage.nbrPtsPerFace = nbrPoints;
